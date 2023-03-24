@@ -1,5 +1,6 @@
 
 import 'package:ehisaab_2/Config/size_config.dart';
+import 'package:ehisaab_2/View/user_data_entry/user_credentials.dart';
 import 'package:flutter/material.dart';
 
 import '../Config/text.dart';
@@ -53,7 +54,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white
                     ),
-                    onPressed: (){},
+                    onPressed: (){
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => const UserCredentials()));
+                    },
                     child: Center(
                       child: Padding(
                         padding: const EdgeInsets.all(12.0),
@@ -115,7 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
             SizedBox(height: SizeConfig.screenHeight! * 0.05,),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+              children: const [
                 PrimaryText(text: 'Alraedy a user? ',color: Color(0xFF9dacb7),),
                 PrimaryText(text: 'Log In.',color:Color(0xFF4baada),fontWeight: FontWeight.w600,)
               ],
