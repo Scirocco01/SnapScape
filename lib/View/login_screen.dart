@@ -1,9 +1,9 @@
 
 import 'package:ehisaab_2/Config/size_config.dart';
-import 'package:ehisaab_2/View/user_data_entry/user_credentials.dart';
 import 'package:flutter/material.dart';
 
 import '../Config/text.dart';
+import 'UserCredentials/user_credentials.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -72,7 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 ),
                   )),
-            SizedBox(height: 10,),
+            const SizedBox(height: 10,),
             Card(
                 elevation: 5,
                 child: ElevatedButton(
@@ -85,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       padding: const EdgeInsets.all(12.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children:   [
+                        children:   const [
                           Icon(Icons.g_mobiledata_rounded,color: Colors.greenAccent,size: 32,),
                           PrimaryText(text: 'Register with Apple',color: Colors.white,),
                         ],
@@ -120,7 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: const [
-                PrimaryText(text: 'Alraedy a user? ',color: Color(0xFF9dacb7),),
+                PrimaryText(text: 'Already a user? ',color: Color(0xFF9dacb7),),
                 PrimaryText(text: 'Log In.',color:Color(0xFF4baada),fontWeight: FontWeight.w600,)
               ],
             )

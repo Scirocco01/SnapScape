@@ -1,9 +1,12 @@
 import 'package:ehisaab_2/Config/size_config.dart';
 import 'package:ehisaab_2/Config/text.dart';
+import 'package:ehisaab_2/View/Components/UserCredentialsComponents/user_credentials_page_two.dart';
 import 'package:ehisaab_2/ViewModel/user_credentials_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../App/injectors.dart';
+import '../Components/UserCredentialsComponents/user_credential_page_one.dart';
 
 class UserCredentials extends StatefulWidget {
   const UserCredentials({Key? key}) : super(key: key);
@@ -14,11 +17,15 @@ class UserCredentials extends StatefulWidget {
 
 class _UserCredentialsState extends State<UserCredentials> {
   final UserCredentialsViewModel viewModel = injector<UserCredentialsViewModel>();
+  final PageController _pageController = PageController();
 
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    return Scaffold(
+    return  ChangeNotifierProvider<UserCredentialsViewModel>(
+        create: (context) => viewModel,
+        child: Consumer<UserCredentialsViewModel>(
+        builder: (context, model, child) =>Scaffold(
       resizeToAvoidBottomInset: false,
         backgroundColor: const Color(0xFFf2f7f9),
         body: Padding(
@@ -36,34 +43,20 @@ class _UserCredentialsState extends State<UserCredentials> {
                   Icon(Icons.g_mobiledata_rounded,color: Colors.greenAccent,size: 82,),
                 ],
               ),
-              const PrimaryText(text: 'Enter User Name?',size:32, color:Colors.black,fontWeight: FontWeight.w500,),
-              SizedBox(height: 10,),
-              const PrimaryText(text: 'This will not be public',color: Color(0xFFaaabba),),
-
-              const SizedBox(
-                height: 30,
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(16)),
-                  border:Border.all(
-                    color: Colors.black
-                  )
-                ),
-                child: const Padding(
-                  padding: EdgeInsets.only(left: 8.0,right: 4),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Enter Name',
-                      border: InputBorder.none,
-                    ),
-                  ),
-                ),
-              ),
-
               SizedBox(
-                height: SizeConfig.screenHeight! * 0.45,
+                width: double.infinity,
+                height: SizeConfig.screenHeight! * 0.64,
+                child: PageView(
+                  controller: _pageController,
+                  children:  [
+
+                    const UserCredentialPageOne(),
+                    UserCredentialPageTwo(viewModel: model,)
+                  ],
+                ),
+
               ),
+
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFFe65b0c),
@@ -86,6 +79,8 @@ class _UserCredentialsState extends State<UserCredentials> {
                TextButton(onPressed: (){},
                   child: const PrimaryText( text: 'Log In',color: Colors.blueAccent,),)
         ]),)
-    );
+    )));
   }
 }
+
+

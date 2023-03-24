@@ -1,9 +1,11 @@
 
 import 'package:flutter/material.dart';
 
+import 'App/injectors.dart';
 import 'View/login_screen.dart';
 
-void main() {
+Future<void> main() async{
+  await initDependencies();
   runApp(const MyApp());
 }
 
