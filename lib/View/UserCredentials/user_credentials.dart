@@ -7,6 +7,8 @@ import 'package:provider/provider.dart';
 
 import '../../App/injectors.dart';
 import '../Components/UserCredentialsComponents/user_credential_page_one.dart';
+import '../Components/UserCredentialsComponents/user_credentials_page_four.dart';
+import '../Components/UserCredentialsComponents/user_credentials_page_three.dart';
 
 class UserCredentials extends StatefulWidget {
   const UserCredentials({Key? key}) : super(key: key);
@@ -51,7 +53,9 @@ class _UserCredentialsState extends State<UserCredentials> {
                   children:  [
 
                     const UserCredentialPageOne(),
-                    UserCredentialPageTwo(viewModel: model,)
+                    UserCredentialPageTwo(viewModel: model,),
+                    const UserCredentialsPageThree(),
+                    const UserCredentialPageFour()
                   ],
                 ),
 
@@ -64,11 +68,21 @@ class _UserCredentialsState extends State<UserCredentials> {
                     borderRadius: BorderRadius.all(Radius.circular(8))
                   )
                 ),
-                  onPressed: (){},
-                  child: const Center(
+                  onPressed: (){
+
+                  if(_pageController.hasClients){
+                    _pageController.animateToPage(model.pageNumber(),
+                        duration: const Duration(milliseconds: 10),
+                        curve: Curves.decelerate);
+                  }
+
+                  },
+                  child: Center(
                     child: Padding(
-                      padding: EdgeInsets.only(top: 12.0,bottom: 12.0),
-                      child: PrimaryText(text: 'Next',color: Colors.white,size: 26,),
+                      padding: const EdgeInsets.only(top: 12.0,bottom: 12.0),
+                      child:model.pageNum >= 3?
+                      const PrimaryText(text: 'Register',color: Colors.white,size: 26,) :
+                      const PrimaryText(text: 'Next',color: Colors.white,size: 26,),
                     ),
                   )),
 
