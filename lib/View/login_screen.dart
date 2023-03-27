@@ -1,7 +1,11 @@
 
 import 'package:ehisaab_2/Config/size_config.dart';
+import 'package:ehisaab_2/View/bottom_navigation.dart';
+import 'package:ehisaab_2/ViewModel/auth_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../App/injectors.dart';
 import '../Config/text.dart';
 import 'UserCredentials/user_credentials.dart';
 
@@ -13,12 +17,18 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final AuthViewModel viewModel = injector<AuthViewModel>();
+
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    return Scaffold(
+    return ChangeNotifierProvider<AuthViewModel>(
+        create: (context) => viewModel,
+        child: Consumer<AuthViewModel>(
+        builder: (context, model, child) =>Scaffold(
       backgroundColor: const Color(0xFFf2f7f9),
-      body: Padding(
+        body: Padding(
         padding: const EdgeInsets.only(left: 20,right: 20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -55,8 +65,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       backgroundColor: Colors.white
                     ),
                     onPressed: (){
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => const UserCredentials()));
+                      viewModel.signInWithGoogle().then((value) =>
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) => const BottomNavigation()))
+                      );
+                      // Navigator.push(context,
+                      //     MaterialPageRoute(builder: (context) => const UserCredentials()));
                     },
                     child: Center(
                       child: Padding(
@@ -94,7 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   ),
                 )),
-            SizedBox(height: 10,),
+            const SizedBox(height: 10,),
             Card(
                 elevation: 5,
                 child: ElevatedButton(
@@ -128,6 +142,6 @@ class _LoginScreenState extends State<LoginScreen> {
           ],
         ),
       )
-    );
+    )));
   }
 }

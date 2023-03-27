@@ -47,7 +47,7 @@ class _UserCredentialsState extends State<UserCredentials> {
               ),
               SizedBox(
                 width: double.infinity,
-                height: SizeConfig.screenHeight! * 0.64,
+                height: SizeConfig.screenHeight! * 0.62,
                 child: PageView(
                   controller: _pageController,
                   children:  [
@@ -89,9 +89,9 @@ class _UserCredentialsState extends State<UserCredentials> {
               const SizedBox(
                 height: 10
               ),
-              const PrimaryText(text: 'Do you already have an account?',color: Color(0xFF97a6b2),),
+              const PrimaryText(text: 'Do you already have an account?',color: Color(0xFF97a6b2),size: 12,),
                TextButton(onPressed: (){},
-                  child: const PrimaryText( text: 'Log In',color: Colors.blueAccent,),)
+                  child: const PrimaryText( text: 'Log In',color: Colors.blueAccent,size: 12,),)
         ]),)
     )));
   }
