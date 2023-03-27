@@ -19,7 +19,7 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.red,
-      height: 100,
+      height: 900,
       width: 100,
 
     );

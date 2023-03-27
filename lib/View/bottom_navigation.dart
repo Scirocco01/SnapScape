@@ -1,12 +1,10 @@
 
 
 
-import 'package:ehisaab_2/View/HomePage/home_page.dart';
-import 'package:ehisaab_2/View/Search/search_page.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-import '../ViewModel/navigation_provider_view_model.dart';
+import 'BottomNavigationRouting/HomePage/home_page.dart';
+import 'BottomNavigationRouting/Search/search_page.dart';
 
 class BottomNavigation extends StatefulWidget {
   const BottomNavigation({Key? key}) : super(key: key);
