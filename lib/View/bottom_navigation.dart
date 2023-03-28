@@ -46,21 +46,18 @@ class _BottomNavigationState extends State<BottomNavigation> {
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex)
       ),
-      bottomNavigationBar:Padding(
-        padding: const EdgeInsets.only(left: 12.0,right: 12,bottom: 16),
-        child: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: const BoxDecoration(
-            color: Colors.black,
-            borderRadius: BorderRadius.all(Radius.circular(16))
-          ),
-          child: BottomNavigationBar(
+      bottomNavigationBar:  BottomNavigationBar(
             type: BottomNavigationBarType.fixed,
             showSelectedLabels: false,
+            selectedIconTheme: IconThemeData(
+              color: Colors.black,
+            ),
+            unselectedIconTheme: IconThemeData(
+              color: Colors.grey),
             iconSize: 30,
             showUnselectedLabels: false,
 
-            backgroundColor: Colors.black,
+            backgroundColor: Colors.white,
             items: const[
               BottomNavigationBarItem(
                 icon: Icon(Icons.home,),
@@ -84,7 +81,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
               BottomNavigationBarItem(
                 icon: Icon(Icons.video_camera_back_outlined),
                 label: '',
-                backgroundColor: Colors.black,
+                backgroundColor: Colors.white,
 
               ),
               BottomNavigationBarItem(
@@ -104,9 +101,6 @@ class _BottomNavigationState extends State<BottomNavigation> {
 
 
 
-          ),
-        ),
-      ) ,
-    );
+          ));
   }
 }
