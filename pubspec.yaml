@@ -49,6 +49,8 @@ dependencies:
   #for firebase
   firebase_auth: ^4.3.0
   firebase_core: ^2.8.0
+
+  
   google_sign_in: ^6.0.2
   flutter_svg: ^1.1.6
   stream_feed: ^0.6.0+2
