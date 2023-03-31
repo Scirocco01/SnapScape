@@ -1,12 +1,13 @@
 import 'package:flutter/cupertino.dart';
 
 
+
 class HomeViewModel extends ChangeNotifier {
   // StreamChatClient client = StreamChatClient('');
   // var channel;
   int checkvar = 0;
 
-  changenum(int val) {
+  changeNum(int val) {
     checkvar = val;
     notifyListeners();
   }
@@ -15,7 +16,7 @@ class HomeViewModel extends ChangeNotifier {
   //   client = value;
   //   notifyListeners();
   // }
-
+  //
   // assignChannel(Channel value) {
   //   channel = value;
   //   notifyListeners();

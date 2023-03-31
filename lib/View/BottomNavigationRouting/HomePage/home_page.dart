@@ -145,10 +145,11 @@ class _HomePageState extends State<HomePage> {
                                 angle: -30 * 3.1415926535 / 180,
                                 child: IconButton(
                                     onPressed: () {
+                                      print('this should be the value of test num in homeScreen ${model.checkvar}');
                                       if (_pageController.hasClients) {
                                         _pageController.animateToPage(1,
                                             duration:
-                                                Duration(milliseconds: 600),
+                                                const Duration(milliseconds: 600),
                                             curve: Curves.decelerate);
                                       }
                                     },

@@ -25,7 +25,10 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -61,16 +64,6 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAaDEjSwNrvszWIkTmAPeW6wiWpSjKCLuU',
-    appId: '1:36227737701:ios:1c0d2041903dd514413e8c',
-    messagingSenderId: '36227737701',
-    projectId: 'todoklikkers-74033',
-    storageBucket: 'todoklikkers-74033.appspot.com',
-    iosClientId: '36227737701-2sl2k2davi8d38l7i1rauq8j29hbqq5l.apps.googleusercontent.com',
-    iosBundleId: 'com.example.ehisaab2',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyAaDEjSwNrvszWIkTmAPeW6wiWpSjKCLuU',
     appId: '1:36227737701:ios:1c0d2041903dd514413e8c',
     messagingSenderId: '36227737701',

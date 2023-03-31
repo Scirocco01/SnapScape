@@ -1,4 +1,5 @@
 import 'package:ehisaab_2/View/BottomNavigationRouting/HomePage/home_page.dart';
+import 'package:ehisaab_2/View/BottomNavigationRouting/Notifications/notifications.dart';
 import 'package:ehisaab_2/ViewModel/navigation_provider_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -55,6 +56,8 @@ class _BottomNavigationState extends State<BottomNavigation> {
                       const HomePageRoute(setupPageRoute: "dashboard/home"),
                     if (model.currentTab == 'search')
                       const SearchPageRoute(setupPageRoute: "dashboard/search"),
+                    if(model.currentTab == 'notifications')
+                      const NotificationsRoute(setupPageRoute: 'dashboard/notifications'),
                     Container(
                       decoration: const BoxDecoration(
                           color: Colors.white,
@@ -90,17 +93,28 @@ class _BottomNavigationState extends State<BottomNavigation> {
                                     size: 30,
                                   )),
                               IconButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    model.changeCurrentTabTo('notifications');
+                                  },
                                   icon: const Icon(
                                     Icons.favorite_border,
                                     size: 30,
                                   )),
-                              IconButton(
-                                  onPressed: () {},
-                                  icon: const Icon(
-                                    Icons.notifications,
-                                    size: 30,
-                                  )),
+                              GestureDetector(
+                                onTap: () {
+                                  model.changeCurrentTabTo('profile');
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: const BorderRadius.all(Radius.circular(16)),
+                                    border: Border.all(color: model.currentTab == 'profile'?Colors.black:Colors.white)
+                                  ),
+                                  child: const CircleAvatar(
+                                    radius: 16,
+                                    backgroundImage: NetworkImage('https://e1.pxfuel.com/desktop-wallpaper/270/669/desktop-wallpaper-blue-fade-gradient-by-hk3ton-color-fade-thumbnail.jpg'),
+                                  ),
+                                ),
+                              ),
                             ]),
                       ),
                     )
