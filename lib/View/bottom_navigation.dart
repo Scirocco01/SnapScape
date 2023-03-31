@@ -1,24 +1,31 @@
-
-
-
+import 'package:ehisaab_2/View/BottomNavigationRouting/HomePage/home_page.dart';
+import 'package:ehisaab_2/ViewModel/navigation_provider_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import 'BottomNavigationRouting/HomePage/home_page.dart';
+import '../App/injectors.dart';
+
 import 'BottomNavigationRouting/Search/search_page.dart';
 
 class BottomNavigation extends StatefulWidget {
-  const BottomNavigation({Key? key}) : super(key: key);
+  const BottomNavigation({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<BottomNavigation> createState() => _BottomNavigationState();
 }
 
 class _BottomNavigationState extends State<BottomNavigation> {
-  int _selectedIndex = 0;
+  final NavigationProvider viewModel = injector<NavigationProvider>();
+
   static const TextStyle optionStyle =
-  TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static const List<Widget> _widgetOptions = <Widget>[
-    HomePage(),
+    Text(
+      'Index 2: School',
+      style: optionStyle,
+    ),
     SearchPage(),
     Text(
       'Index 2: School',
@@ -34,73 +41,115 @@ class _BottomNavigationState extends State<BottomNavigation> {
     ),
   ];
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex)
-      ),
-      bottomNavigationBar:  BottomNavigationBar(
-            type: BottomNavigationBarType.fixed,
-            showSelectedLabels: false,
-            selectedIconTheme: IconThemeData(
-              color: Colors.black,
-            ),
-            unselectedIconTheme: IconThemeData(
-              color: Colors.grey),
-            iconSize: 30,
-            showUnselectedLabels: false,
+    return ChangeNotifierProvider<NavigationProvider>(
+        create: (context) => viewModel,
+        child: Consumer<NavigationProvider>(
+            builder: (context, model, child) => Scaffold(
+                resizeToAvoidBottomInset: false,
+                body: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    if (model.currentTab == 'home')
+                      const HomePageRoute(setupPageRoute: "dashboard/home"),
+                    if (model.currentTab == 'search')
+                      const SearchPageRoute(setupPageRoute: "dashboard/search"),
+                    Container(
+                      decoration: const BoxDecoration(
+                          color: Colors.white,
+                          border: Border(
+                              top:
+                                  BorderSide(color: Colors.black, width: 0.1))),
+                      height: 60,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 16.0, right: 16),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              IconButton(
+                                  onPressed: () {
+                                    model.changeCurrentTabTo('home');
+                                  },
+                                  icon: const Icon(
+                                    Icons.home,
+                                    size: 30,
+                                  )),
+                              IconButton(
+                                  onPressed: () {
+                                    model.changeCurrentTabTo('search');
+                                  },
+                                  icon: const Icon(
+                                    Icons.search,
+                                    size: 30,
+                                  )),
+                              IconButton(
+                                  onPressed: () {},
+                                  icon: const Icon(
+                                    Icons.add_box,
+                                    size: 30,
+                                  )),
+                              IconButton(
+                                  onPressed: () {},
+                                  icon: const Icon(
+                                    Icons.favorite_border,
+                                    size: 30,
+                                  )),
+                              IconButton(
+                                  onPressed: () {},
+                                  icon: const Icon(
+                                    Icons.notifications,
+                                    size: 30,
+                                  )),
+                            ]),
+                      ),
+                    )
+                  ],
+                ))));
 
-            backgroundColor: Colors.white,
-            items: const[
-              BottomNavigationBarItem(
-                icon: Icon(Icons.home,),
-                label: '',
-                backgroundColor: Colors.black,
-
-
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.search),
-                label: '',
-                backgroundColor: Colors.black,
-
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.add_box),
-                label: '',
-                backgroundColor: Colors.black,
-
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.video_camera_back_outlined),
-                label: '',
-                backgroundColor: Colors.white,
-
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.notifications),
-                label: '',
-                backgroundColor: Colors.black,
-
-              ),
-
-
-            ],
-
-            currentIndex: _selectedIndex,
-            selectedItemColor: Colors.amber[800],
-            unselectedItemColor: Colors.white,
-            onTap: _onItemTapped,
-
-
-
-          ));
+    //               bottomNavigationBar: BottomNavigationBar(
+    //                 type: BottomNavigationBarType.fixed,
+    //                 showSelectedLabels: false,
+    //                 selectedIconTheme: const IconThemeData(
+    //                   color: Colors.black,
+    //                 ),
+    //                 unselectedIconTheme: const IconThemeData(color: Colors.grey),
+    //                 iconSize: 30,
+    //                 showUnselectedLabels: false,
+    //                 backgroundColor: Colors.white,
+    //                 items: const [
+    //                   BottomNavigationBarItem(
+    //                     icon: Icon(
+    //                       Icons.home,
+    //                     ),
+    //                     label: '',
+    //                     backgroundColor: Colors.black,
+    //                   ),
+    //                   BottomNavigationBarItem(
+    //                     icon: Icon(Icons.search),
+    //                     label: '',
+    //                     backgroundColor: Colors.black,
+    //                   ),
+    //                   BottomNavigationBarItem(
+    //                     icon: Icon(Icons.add_box),
+    //                     label: '',
+    //                     backgroundColor: Colors.black,
+    //                   ),
+    //                   BottomNavigationBarItem(
+    //                     icon: Icon(Icons.video_camera_back_outlined),
+    //                     label: '',
+    //                     backgroundColor: Colors.white,
+    //                   ),
+    //                   BottomNavigationBarItem(
+    //                     icon: Icon(Icons.notifications),
+    //                     label: '',
+    //                     backgroundColor: Colors.black,
+    //                   ),
+    //                 ],
+    //                 currentIndex: _selectedIndex,
+    //                 selectedItemColor: Colors.amber[800],
+    //                 unselectedItemColor: Colors.white,
+    //                 onTap: _onItemTapped,
+    //               ))));
   }
 }

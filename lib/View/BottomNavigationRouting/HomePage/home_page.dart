@@ -1,10 +1,57 @@
+import 'package:ehisaab_2/App/injectors.dart';
 import 'package:ehisaab_2/Config/size_config.dart';
-import 'package:ehisaab_2/View/BottomNavigationRouting/HomePage/messaging_page.dart';
+import 'package:ehisaab_2/ViewModel/home_view_model.dart';
+
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:ehisaab_2/Config/text.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'messaging_page.dart';
+
+class HomePageRoute extends StatefulWidget {
+  const HomePageRoute({
+    Key? key,
+    required this.setupPageRoute,
+  }) : super(key: key);
+
+  final String setupPageRoute;
+
+  @override
+  State<HomePageRoute> createState() => _HomePageRouteState();
+}
+
+class _HomePageRouteState extends State<HomePageRoute> {
+  final _navigatorKey = GlobalKey<NavigatorState>();
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Navigator(
+        key: _navigatorKey,
+        initialRoute: widget.setupPageRoute,
+        onGenerateRoute: _onGenerateRoute,
+      ),
+    );
+  }
+
+  Route _onGenerateRoute(RouteSettings settings) {
+    late Widget page;
+    switch (settings.name) {
+      case "dashboard/home":
+        page = const HomePage();
+        break;
+    }
+
+    return MaterialPageRoute<dynamic>(
+      builder: (context) {
+        return page;
+      },
+      settings: settings,
+    );
+  }
+}
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -15,6 +62,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final PageController _pageController = PageController();
+
+  final HomeViewModel viewModel = injector<HomeViewModel>();
 
   List<Feed> myFeed = [
     const Feed(
@@ -68,132 +117,144 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return PageView(
-      controller: _pageController,
-      children: [
-        Scaffold(
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-            backgroundColor: Colors.white,
-            elevation: 0,
-            title: Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Instagram',
-                    style: GoogleFonts.pacifico(
-                      fontSize: 26,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black,
-                    ),
-                  ),
-                  Transform.rotate(
-                    angle: -30 * 3.1415926535 / 180,
-                    child: IconButton(
-                        onPressed: () {
-                          if (_pageController.hasClients) {
-                            _pageController.animateToPage(1,
-                                duration: Duration(milliseconds: 600),
-                                curve: Curves.decelerate);
-                          }
-                        },
-                        icon: const Icon(
-                          Icons.send,
-                          color: Colors.black,
-                        )),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          backgroundColor: Colors.white,
-          body: Padding(
-            padding: const EdgeInsets.only(top: 4.0, left: 0, right: 0),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: Row(
-                      children: [
-                        Column(
-                          children: [
-                            Stack(
-                              children: [
-                                const CircleAvatar(
-                                  radius: 35,
-                                  backgroundImage: NetworkImage(
-                                      'https://e1.pxfuel.com/desktop-wallpaper/270/669/desktop-wallpaper-blue-fade-gradient-by-hk3ton-color-fade-thumbnail.jpg'),
+    return ChangeNotifierProvider<HomeViewModel>(
+        create: (context) => viewModel,
+        child: Consumer<HomeViewModel>(
+            builder: (context, model, child) => PageView(
+                  controller: _pageController,
+                  children: [
+                    Scaffold(
+                      appBar: AppBar(
+                        automaticallyImplyLeading: false,
+                        backgroundColor: Colors.white,
+                        elevation: 0,
+                        title: Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Instagram',
+                                style: GoogleFonts.pacifico(
+                                  fontSize: 26,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black,
                                 ),
-                                Positioned(
-                                  bottom: 0,
-                                  right: 0,
-                                  child: Container(
-                                    width: 30,
-                                    height: 30,
-                                    decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Colors.blue,
-                                        border:
-                                            Border.all(color: Colors.white)),
-                                    child: const Center(
-                                      child: Text(
-                                        '+',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const Padding(
-                              padding: EdgeInsets.only(top: 4.0),
-                              child: PrimaryText(
-                                text: 'Your Story',
-                                size: 12,
                               ),
-                            )
-                          ],
+                              Transform.rotate(
+                                angle: -30 * 3.1415926535 / 180,
+                                child: IconButton(
+                                    onPressed: () {
+                                      if (_pageController.hasClients) {
+                                        _pageController.animateToPage(1,
+                                            duration:
+                                                Duration(milliseconds: 600),
+                                            curve: Curves.decelerate);
+                                      }
+                                    },
+                                    icon: const Icon(
+                                      Icons.send,
+                                      color: Colors.black,
+                                    )),
+                              ),
+                            ],
+                          ),
                         ),
-                        SizedBox(
-                          height: 100,
-                          width: SizeConfig.screenWidth! * 0.80,
-                          child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: myStories.length,
-                              itemBuilder: (context, index) {
-                                return Story(
-                                    storyUrl: myStories[index].storyUrl,
-                                    userName: myStories[index].userName);
-                              }),
-                        )
-                      ],
+                      ),
+                      backgroundColor: Colors.white,
+                      body: Padding(
+                        padding:
+                            const EdgeInsets.only(top: 4.0, left: 0, right: 0),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: Row(
+                                  children: [
+                                    Column(
+                                      children: [
+                                        Stack(
+                                          children: [
+                                            const CircleAvatar(
+                                              radius: 35,
+                                              backgroundImage: NetworkImage(
+                                                  'https://e1.pxfuel.com/desktop-wallpaper/270/669/desktop-wallpaper-blue-fade-gradient-by-hk3ton-color-fade-thumbnail.jpg'),
+                                            ),
+                                            Positioned(
+                                              bottom: 0,
+                                              right: 0,
+                                              child: Container(
+                                                width: 30,
+                                                height: 30,
+                                                decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    color: Colors.blue,
+                                                    border: Border.all(
+                                                        color: Colors.white)),
+                                                child: const Center(
+                                                  child: Text(
+                                                    '+',
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const Padding(
+                                          padding: EdgeInsets.only(top: 4.0),
+                                          child: PrimaryText(
+                                            text: 'Your Story',
+                                            size: 12,
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: 100,
+                                      width: SizeConfig.screenWidth! * 0.80,
+                                      child: ListView.builder(
+                                          scrollDirection: Axis.horizontal,
+                                          itemCount: myStories.length,
+                                          itemBuilder: (context, index) {
+                                            return Story(
+                                                storyUrl:
+                                                    myStories[index].storyUrl,
+                                                userName:
+                                                    myStories[index].userName);
+                                          }),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              const Divider(
+                                color: Colors.grey,
+                              ),
+                              Wrap(
+                                spacing: 8.0, // space between adjacent widgets
+                                runSpacing:
+                                    50.0, // space between lines of widgets
+                                children: myFeed,
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                  Divider(
-                    color: Colors.grey,
-                  ),
-                  Wrap(
-                    spacing: 8.0, // space between adjacent widgets
-                    runSpacing: 50.0, // space between lines of widgets
-                    children: myFeed,
-                  )
-                ],
-              ),
-            ),
-          ),
-        ),
-        MessagingPage(pageController: _pageController)
-      ],
-    );
+                    MessagingPage(
+                      pageController: _pageController,
+                      model: model,
+                    )
+                  ],
+                )));
   }
 }
 
