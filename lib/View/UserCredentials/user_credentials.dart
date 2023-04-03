@@ -1,6 +1,7 @@
 import 'package:ehisaab_2/Config/size_config.dart';
 import 'package:ehisaab_2/Config/text.dart';
 import 'package:ehisaab_2/View/Components/UserCredentialsComponents/user_credentials_page_two.dart';
+import 'package:ehisaab_2/View/bottom_navigation.dart';
 import 'package:ehisaab_2/ViewModel/user_credentials_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -19,6 +20,7 @@ class UserCredentials extends StatefulWidget {
 
 class _UserCredentialsState extends State<UserCredentials> {
   final UserCredentialsViewModel viewModel = injector<UserCredentialsViewModel>();
+  final GlobalKey<FormState> _key = GlobalKey();
   final PageController _pageController = PageController();
 
   @override
@@ -52,8 +54,12 @@ class _UserCredentialsState extends State<UserCredentials> {
                   controller: _pageController,
                   children:  [
 
-                    const UserCredentialPageOne(),
+                     Form(
+                       key:_key,
+                         child: UserCredentialPageOne(validatorKey: _key,)),
+
                     UserCredentialPageTwo(viewModel: model,),
+
                     const UserCredentialsPageThree(),
                     const UserCredentialPageFour()
                   ],
@@ -63,17 +69,25 @@ class _UserCredentialsState extends State<UserCredentials> {
 
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFFe65b0c),
+                  backgroundColor: const Color(0xFFe65b0c),
                   shape:const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(8))
                   )
                 ),
                   onPressed: (){
 
-                  if(_pageController.hasClients){
-                    _pageController.animateToPage(model.pageNumber(),
+                  if(_pageController.hasClients && _key.currentState!.validate()){
+                    _pageController.animateToPage(model.pageNum,
                         duration: const Duration(milliseconds: 10),
                         curve: Curves.decelerate);
+                    model.pageNumber();
+                  }
+                  if(model.pageNum > 3 ){
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                            const BottomNavigation()));
                   }
 
                   },

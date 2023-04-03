@@ -4,7 +4,7 @@ import 'package:ehisaab_2/Config/text.dart';
 import 'package:ehisaab_2/View/BottomNavigationRouting/Search/search_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+
 
 class SearchPageRoute extends StatefulWidget {
   const SearchPageRoute({
@@ -121,22 +121,12 @@ class Tile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final rng = Random(index);
-    final width = MediaQuery.of(context).size.width;
+    final width = MediaQuery
+        .of(context)
+        .size
+        .width;
     final height = rng.nextDouble() * 100 * 100;
     final url = '//source.unsplash.com/random/400x600';
-    return CachedNetworkImage(
-      imageUrl: url,
-      imageBuilder: (context, imageProvider) => Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: imageProvider,
-            fit: BoxFit.cover,
-          ),
-          borderRadius: BorderRadius.circular(12),
-        ),
-      ),
-      placeholder: (context, url) => CircularProgressIndicator(),
-      errorWidget: (context, url, error) => Icon(Icons.error),
-    );
+    return Container(child: Center(child: PrimaryText(text: '$index',),),);
   }
 }

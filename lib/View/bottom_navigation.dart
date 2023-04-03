@@ -1,5 +1,6 @@
 import 'package:ehisaab_2/View/BottomNavigationRouting/HomePage/home_page.dart';
 import 'package:ehisaab_2/View/BottomNavigationRouting/Notifications/notifications.dart';
+import 'package:ehisaab_2/View/BottomNavigationRouting/Profile/profile_page.dart';
 import 'package:ehisaab_2/ViewModel/navigation_provider_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -58,6 +59,8 @@ class _BottomNavigationState extends State<BottomNavigation> {
                       const SearchPageRoute(setupPageRoute: "dashboard/search"),
                     if(model.currentTab == 'notifications')
                       const NotificationsRoute(setupPageRoute: 'dashboard/notifications'),
+                    if(model.currentTab == 'profile')
+                      const ProfileRoute(setupPageRoute: 'dashboard/profile'),
                     Container(
                       decoration: const BoxDecoration(
                           color: Colors.white,
@@ -99,6 +102,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
                                   icon: const Icon(
                                     Icons.favorite_border,
                                     size: 30,
+
                                   )),
                               GestureDetector(
                                 onTap: () {
@@ -106,8 +110,8 @@ class _BottomNavigationState extends State<BottomNavigation> {
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    borderRadius: const BorderRadius.all(Radius.circular(16)),
-                                    border: Border.all(color: model.currentTab == 'profile'?Colors.black:Colors.white)
+                                    borderRadius: const BorderRadius.all(Radius.circular(32)),
+                                    border: Border.all(color: model.currentTab == 'profile'?Colors.black:Colors.white,width: 2)
                                   ),
                                   child: const CircleAvatar(
                                     radius: 16,

@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 
 import '../App/injectors.dart';
 import '../Config/text.dart';
+import 'UserCredentials/user_credentials.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key, })
@@ -74,13 +75,23 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.white),
-                            onPressed: () {
-                              viewModel.signInWithGoogle().then((value) =>
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const BottomNavigation())));
+                            onPressed: () async {
+                              if(await model.signInWithGo() == true){
+                                Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const UserCredentials()));
+                              }
+                              else{
+                                print('error');
+                              }
+                              // viewModel.signInWithGoogle().then((value) =>
+                              //     Navigator.push(
+                              //         context,
+                              //         MaterialPageRoute(
+                              //             builder: (context) =>
+                              //                 const BottomNavigation())));
                               // Navigator.push(context,
                               //     MaterialPageRoute(builder: (context) => const UserCredentials()));
                             },
