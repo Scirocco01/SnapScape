@@ -3,6 +3,7 @@ import 'package:ehisaab_2/Config/text.dart';
 import 'package:ehisaab_2/View/Components/UserCredentialsComponents/user_credentials_page_two.dart';
 import 'package:ehisaab_2/View/bottom_navigation.dart';
 import 'package:ehisaab_2/ViewModel/user_credentials_view_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -12,7 +13,8 @@ import '../Components/UserCredentialsComponents/user_credentials_page_four.dart'
 import '../Components/UserCredentialsComponents/user_credentials_page_three.dart';
 
 class UserCredentials extends StatefulWidget {
-  const UserCredentials({Key? key}) : super(key: key);
+  const UserCredentials({Key? key, required this.user}) : super(key: key);
+  final User? user;
 
   @override
   State<UserCredentials> createState() => _UserCredentialsState();
@@ -56,12 +58,11 @@ class _UserCredentialsState extends State<UserCredentials> {
 
                      Form(
                        key:_key,
-                         child: UserCredentialPageOne(validatorKey: _key,)),
+                         child: UserCredentialPageOne(validatorKey: _key,model: model,)),
 
                     UserCredentialPageTwo(viewModel: model,),
 
-                    const UserCredentialsPageThree(),
-                    const UserCredentialPageFour()
+                     UserCredentialsPageThree(model: model,),
                   ],
                 ),
 
@@ -75,14 +76,15 @@ class _UserCredentialsState extends State<UserCredentials> {
                   )
                 ),
                   onPressed: (){
-
-                  if(_pageController.hasClients && _key.currentState!.validate()){
+                    model.pageNumber();
+                  if(_pageController.hasClients ){
                     _pageController.animateToPage(model.pageNum,
                         duration: const Duration(milliseconds: 10),
                         curve: Curves.decelerate);
-                    model.pageNumber();
+
                   }
                   if(model.pageNum > 3 ){
+                    model.callSaveData(widget.user);
                     Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -94,7 +96,7 @@ class _UserCredentialsState extends State<UserCredentials> {
                   child: Center(
                     child: Padding(
                       padding: const EdgeInsets.only(top: 12.0,bottom: 12.0),
-                      child:model.pageNum >= 3?
+                      child:model.pageNum >= 2?
                       const PrimaryText(text: 'Register',color: Colors.white,size: 26,) :
                       const PrimaryText(text: 'Next',color: Colors.white,size: 26,),
                     ),

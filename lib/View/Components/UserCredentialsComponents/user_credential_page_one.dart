@@ -1,5 +1,6 @@
 
 import 'package:ehisaab_2/View/Components/Validators/validators.dart';
+import 'package:ehisaab_2/ViewModel/user_credentials_view_model.dart';
 import 'package:flutter/material.dart';
 
 import '../../../Config/size_config.dart';
@@ -8,8 +9,9 @@ import '../../../Config/text.dart';
 class UserCredentialPageOne extends StatelessWidget {
    const UserCredentialPageOne({
      required this.validatorKey,
-    Key? key,
+    Key? key, required this.model,
   }) : super(key: key);
+   final UserCredentialsViewModel model;
   final GlobalKey<FormState> validatorKey;
 
   @override
@@ -26,6 +28,9 @@ class UserCredentialPageOne extends StatelessWidget {
         ),
         TextFormField(
               validator: validateName,
+              onChanged: (val){
+                model.selectName(val);
+              },
               
               decoration:  const InputDecoration(
 

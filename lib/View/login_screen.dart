@@ -76,24 +76,18 @@ class _LoginScreenState extends State<LoginScreen> {
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.white),
                             onPressed: () async {
-                              if(await model.signInWithGo() == true){
+
+
+                              if(await model.signInWithGo() != null){
                                 Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    const UserCredentials()));
+                                                     UserCredentials(user: model.user,)));
                               }
                               else{
                                 print('error');
                               }
-                              // viewModel.signInWithGoogle().then((value) =>
-                              //     Navigator.push(
-                              //         context,
-                              //         MaterialPageRoute(
-                              //             builder: (context) =>
-                              //                 const BottomNavigation())));
-                              // Navigator.push(context,
-                              //     MaterialPageRoute(builder: (context) => const UserCredentials()));
                             },
                             child: Center(
                               child: Padding(

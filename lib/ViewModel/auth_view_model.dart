@@ -2,9 +2,13 @@
 
 
 
+import 'package:ehisaab_2/View/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+
+import '../View/UserCredentials/user_credentials.dart';
+import '../View/bottom_navigation.dart';
 
 
 class AuthViewModel extends ChangeNotifier{
@@ -14,15 +18,15 @@ class AuthViewModel extends ChangeNotifier{
   User? get user => _user;
 
 
-  Future<bool> signInWithGo() async {
+  Future<User?> signInWithGo() async {
      User? user = await _signInWithGoogle();
     if (user != null) {
       _user = user;
       notifyListeners();
-      return true;
+      return user;
     }
     else{
-      return false;
+      return null;
     }
   }
 
@@ -50,5 +54,10 @@ class AuthViewModel extends ChangeNotifier{
       return null;
     }
   }
+
+
+
+
+
 
 }

@@ -1,4 +1,5 @@
 
+import 'package:ehisaab_2/ViewModel/user_credentials_view_model.dart';
 import 'package:flutter/material.dart';
 
 import '../../../Config/size_config.dart';
@@ -6,8 +7,9 @@ import '../../../Config/text.dart';
 
 class UserCredentialsPageThree extends StatefulWidget {
   const UserCredentialsPageThree({
-    Key? key,
+    Key? key, required this.model,
   }) : super(key: key);
+  final UserCredentialsViewModel model;
 
   @override
   State<UserCredentialsPageThree> createState() => _UserCredentialsPageThreeState();
@@ -24,15 +26,16 @@ class _UserCredentialsPageThreeState extends State<UserCredentialsPageThree> {
         const SizedBox(
           height: 30,
         ),
-        dataEntryWidget('Enter Name'),
+        dataEntryWidget('Enter a User Name',widget.model,1),
         const SizedBox(
           height: 15,
         ),
-        dataEntryWidget('Number or Email'),
+        dataEntryWidget('Number or Email',widget.model,2),
         const SizedBox(
           height: 15,
         ),
-        dataEntryWidget('Nick Name'),
+
+        dataEntryWidget('write your bio@',widget.model,3),
         const SizedBox(
           height: 15,
         ),
@@ -44,17 +47,33 @@ class _UserCredentialsPageThreeState extends State<UserCredentialsPageThree> {
     );
   }
 
-  Container dataEntryWidget(String hintText) {
+  Container dataEntryWidget(String hintText,UserCredentialsViewModel model,int num){
     return Container(
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(16)),
+            borderRadius: const BorderRadius.all(Radius.circular(16)),
             border:Border.all(
                 color: Colors.black
             )
         ),
         child:  Padding(
-          padding: EdgeInsets.only(left: 8.0,right: 4),
+          padding: const EdgeInsets.only(left: 8.0,right: 4),
           child: TextField(
+            onChanged: (val){
+              switch(num){
+                case 1:{
+                  model.selectUserName(val);
+                }
+                break;
+                case 2:{
+
+                }
+                break;
+                case 3:{
+                  model.selectBio(val);
+                }
+              }
+
+            },
             decoration: InputDecoration(
               hintText: hintText,
               border: InputBorder.none,

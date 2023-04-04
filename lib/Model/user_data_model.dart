@@ -1,14 +1,14 @@
-
+import 'dart:io';
 
 class UserDataModel{
   String name;
   String userName;
-  String photoUrl;
+  File photo;
   String bio;
 
   UserDataModel({required this.name,
     required this.userName,
-    required this.photoUrl,
+    required this.photo,
     required this.bio
   });
 

@@ -1,3 +1,4 @@
+import 'package:ehisaab_2/View/splash_screen.dart';
 import 'package:ehisaab_2/ViewModel/home_view_model.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -12,15 +13,16 @@ import 'firebase_options.dart';
 
 
 Future<void> main() async {
-
+  await initDependencies();
+  runApp(
+    const MyApp(),
+  );
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  await initDependencies();
 
 
-  runApp(
-     const MyApp(),
-  );
+
+
 }
 
 class MyApp extends StatefulWidget {
@@ -49,10 +51,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginScreen(
-          // channel: widget.channel,
-          // client: widget.client,
-          ),
+      home: SplashScreen(),
     );
   }
 }
