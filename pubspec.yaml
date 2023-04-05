@@ -65,6 +65,7 @@ dependencies:
 
   #image picker to images from gallery
   image_picker: 0.7.5
+  firebase_messaging: 14.2.1
 
 
 

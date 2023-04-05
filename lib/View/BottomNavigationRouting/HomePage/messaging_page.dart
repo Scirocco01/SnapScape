@@ -34,16 +34,15 @@ class _MessagingPageState extends State<MessagingPage> {
                         duration: const Duration(milliseconds: 200),
                         curve: Curves.decelerate);
                     print('should animate to home page');
-                    print(
-                        'this should be the num value ${widget.model.checkvar}');
+
                   }
                 },
                 icon: const Icon(
                   Icons.arrow_back,
                   color: Colors.black,
                 )),
-            const PrimaryText(
-              text: 'Sanan_sk',
+             PrimaryText(
+              text: widget.model.userName,
             )
           ],
         ),

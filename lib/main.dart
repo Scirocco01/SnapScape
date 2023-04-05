@@ -14,11 +14,12 @@ import 'firebase_options.dart';
 
 Future<void> main() async {
   await initDependencies();
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(
     const MyApp(),
   );
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
 
 
 
@@ -39,12 +40,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final HomeViewModel viewModel = injector<HomeViewModel>();
 
-  @override
-  void initState() {
 
-    viewModel.changeNum(7);
-    super.initState();
-  }
 
   // This widget is the root of your application.
   @override

@@ -116,6 +116,13 @@ class _HomePageState extends State<HomePage> {
   ];
 
   @override
+  void initState() {
+
+    super.initState();
+    viewModel.getProfilePhotoUrl();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<HomeViewModel>(
         create: (context) => viewModel,
@@ -145,7 +152,7 @@ class _HomePageState extends State<HomePage> {
                                 angle: -30 * 3.1415926535 / 180,
                                 child: IconButton(
                                     onPressed: () {
-                                      print('this should be the value of test num in homeScreen ${model.checkvar}');
+
                                       if (_pageController.hasClients) {
                                         _pageController.animateToPage(1,
                                             duration:
@@ -179,10 +186,10 @@ class _HomePageState extends State<HomePage> {
                                       children: [
                                         Stack(
                                           children: [
-                                            const CircleAvatar(
+                                             CircleAvatar(
                                               radius: 35,
-                                              backgroundImage: NetworkImage(
-                                                  'https://e1.pxfuel.com/desktop-wallpaper/270/669/desktop-wallpaper-blue-fade-gradient-by-hk3ton-color-fade-thumbnail.jpg'),
+                                              backgroundImage: model.profilePhotoUrl != ""?NetworkImage(model.profilePhotoUrl):
+                                                  NetworkImage('https://i.scdn.co/image/ab6761610000e5ebce202eea14763b8b7696936e')
                                             ),
                                             Positioned(
                                               bottom: 0,
