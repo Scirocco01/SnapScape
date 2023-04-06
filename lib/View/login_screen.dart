@@ -84,9 +84,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                             MaterialPageRoute(
                                                 builder: (context) =>
                                                      UserCredentials(user: model.user,)));
+                                print('signInFailed');
                               }
                               else{
-                                print('error');
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            UserCredentials(user: model.user,)));
                               }
                             },
                             child: Center(

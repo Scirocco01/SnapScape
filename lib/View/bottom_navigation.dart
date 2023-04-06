@@ -82,8 +82,11 @@ class _BottomNavigationState extends State<BottomNavigation> {
                                     size: 30,
                                   )),
                               IconButton(
-                                  onPressed: () {
-                                    model.changeCurrentTabTo('search');
+                                  onPressed: () async {
+                                    // model.changeCurrentTabTo('search');
+                                    await model.signOut().then((value) =>
+                                    Navigator.pop(context)
+                                    );
                                   },
                                   icon: const Icon(
                                     Icons.search,

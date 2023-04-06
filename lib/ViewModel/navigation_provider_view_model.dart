@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 
 class NavigationProvider extends ChangeNotifier {
@@ -16,5 +17,14 @@ class NavigationProvider extends ChangeNotifier {
   set currentIndex(int index) {
     _currentIndex = index;
     notifyListeners();
+  }
+
+
+  Future<void> signOut() async {
+    try {
+      await FirebaseAuth.instance.signOut();
+    } catch (e) {
+      print('Error occurred while signing out: $e');
+    }
   }
 }
