@@ -4,69 +4,60 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 
-
+import '../Model/messages_model.dart';
 
 class HomeViewModel extends ChangeNotifier {
-  
-  
   User? user = FirebaseAuth.instance.currentUser;
-  
-  
-  String userId = '';
+
+
 
   String profilePhotoUrl = '';
   String userName = '';
 
-
   //get userName for Home Page
   _userNameForHomePage() async {
-    
-    try{
-      DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection(
-          'users').doc(user!.uid).get();
+    try {
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user!.uid)
+          .get();
       userName = userDoc.get('userName');
       notifyListeners();
-    }catch(e){
+    } catch (e) {
       print('error getting user Name $e');
-      userName = 'error 09032293';
+      userName = 'error 41';
       notifyListeners();
-      
     }
   }
-
-
-  
 
   /// for User Data like name and profile Photo
 
   Future<String> _getProfilePhotoFromFireStore(String userId) async {
     try {
-      DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection(
-          'users').doc(userId).get();
-      
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
+
       notifyListeners();
       return userDoc.get('photoUrl');
-    }
-    catch (e) {
+    } catch (e) {
       print('error getting data form cloud fireStore $e');
       return '';
     }
   }
 
-
   Future<String> _getPhotoFromStorage() async {
     try {
-      Reference photoRef = FirebaseStorage.instance.refFromURL(
-          await _getProfilePhotoFromFireStore(user!.uid));
+      Reference photoRef = FirebaseStorage.instance
+          .refFromURL(await _getProfilePhotoFromFireStore(user!.uid));
       String downloadUrl = await photoRef.getDownloadURL();
       return downloadUrl;
-    }
-    catch (e) {
+    } catch (e) {
       print('error in firebase storage $e');
       return '';
     }
   }
-
 
   getProfilePhotoUrl() async {
     _userNameForHomePage();
@@ -75,12 +66,11 @@ class HomeViewModel extends ChangeNotifier {
     print('getProfileFunc successfully executed photo uri is $profilePhotoUrl');
   }
 
-
   /// for message system
 
   //creating a collection for messages in firebase fireStore
-  final CollectionReference messageCollection = FirebaseFirestore.instance
-      .collection('messages');
+  final CollectionReference messageCollection =
+      FirebaseFirestore.instance.collection('messages');
 
   // implementing a function to send the message
   Future<void> sendMessage(String senderId, receiverID, String textMessage) {
@@ -100,7 +90,6 @@ class HomeViewModel extends ChangeNotifier {
         .snapshots();
   }
 
-
   // a list of user id's the user searches with user names
   List<String> userIdListForMessageSearch = [];
 
@@ -109,52 +98,168 @@ class HomeViewModel extends ChangeNotifier {
 
   // Search user by their user name and saves to (userIdListForMessageSearch) List
   searchUserName(String userName) async {
-    final List<String> matchMakingUsers = [];
+    emptyUserListForMessage();
+    String matchMakingUsers = '';
     QuerySnapshot querySnapshot;
 
     do {
-      querySnapshot = await FirebaseFirestore.instance.collection('users')
+      print('this is the UserName = $userName');
+      querySnapshot = await FirebaseFirestore.instance
+          .collection('users')
           .where('userName', isGreaterThanOrEqualTo: userName)
           .where('userName', isLessThan: '${userName}z')
           .get();
 
       querySnapshot.docs.forEach((doc) {
-        matchMakingUsers.add(doc.id);
+        matchMakingUsers = doc.id;
       });
       if (matchMakingUsers.isEmpty) {
         userName = userName.substring(0, userName.length - 1);
       }
     } while (matchMakingUsers.isEmpty && userName.isNotEmpty);
 
-    userIdListForMessageSearch = matchMakingUsers;
-    _getUserById(userIdListForMessageSearch);
+    matchMakingUsers;
+    print('this is the matchmaking list $matchMakingUsers');
+    await _getUserById(matchMakingUsers);
     notifyListeners();
   }
 
   // function which searches and gives user according to UserID
-   _getUserById(List<String>  userIDList) async {
-    for(var i = 0; i<userIDList.length;i++){
-      DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection(
-          'users').doc(userId).get();
-
-      if (userDoc.exists) {
-       userListForMessage.add(
-           UserMessageModel(
-          profilePic: await _getProfilePhotoFromFireStore(userId),
-          fullName: userDoc.get('name'),
-          userName: userDoc.get('userName'),
+  _getUserById(String userIDList) async {
+    DocumentSnapshot userDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userIDList)
+        .get();
+    print(
+        'the bool value of _checkIfListContainsUser ${_checkIfListContainsUser(userDoc.get('userName'))}');
+    if (userDoc.exists) {
+      if (await _checkIfListContainsUser(await userDoc.get('userName')) !=
+          true) {
+        userListForMessage.add(UserMessageModel(
+          searchedUserId: userDoc.id,
+          profilePic: await _getProfilePhotoFromFireStore(userIDList),
+          fullName: await userDoc.get('name'),
+          userName: await userDoc.get('userName'),
         ));
-       notifyListeners();
-      } else {
-        throw Exception('User not found');
       }
+      print(
+          'user found and this is the user $userListForMessage list length is ${userListForMessage.length}');
+      print('the user id for userName ${userListForMessage[0].searchedUserId}');
 
+      //to sort the list for best matchmaking
+      userListForMessage.sort((a, b) {
+        if (a.userName.startsWith(userName) &&
+            !b.userName.startsWith(userName)) {
+          return -1;
+        } else if (!a.userName.startsWith(userName) &&
+            b.userName.startsWith(userName)) {
+          return 1;
+        } else {
+          return a.userName.compareTo(b.userName);
+        }
+      });
+      notifyListeners();
+    } else {
+      print('User not found');
     }
   }
 
+  Future<bool> _checkIfListContainsUser(String userName) async {
+    return userListForMessage.any((user) => user.userName == userName);
+  }
 
+  emptyUserListForMessage() {
+    userListForMessage = [];
+    notifyListeners();
+    print('emptied the List');
+  }
 
+  ///For Message 2.0
 
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  checkIfMessageThreadExistsAndPush(
+      String userId, String receiverId, String message) async {
+    _firestore.collection('messages');
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('messages')
+        .where('senderId', isEqualTo: userId)
+        .where('receiverId', isEqualTo: receiverId)
+        .get();
 
+    final existingDoc =
+        querySnapshot.docs.isEmpty ? null : querySnapshot.docs.first;
+
+    if (existingDoc != null) {
+      await existingDoc.reference.collection('messages').add({
+        'senderId': userId,
+        'receiverId': receiverId,
+        'message': message,
+        'timestamp': Timestamp.now(),
+      });
+    } else {
+      await _firestore.collection('messages').add({
+        'senderId': userId,
+        'receiverId': receiverId,
+        'messages': [
+          {
+            'senderId': userId,
+            'receiverId': receiverId,
+            'message': message,
+            'timestamp': Timestamp.now(),
+          },
+        ],
+      });
+    }
+  }
+
+  //Send Message Function
+  sendAMessage(String senderId, String receiverId, String message) async {
+    String chatId = '$senderId+$receiverId';
+    CollectionReference messageCollection = _firestore.collection('messages');
+    try {
+      await messageCollection.doc(chatId).set({
+        'senderId': senderId,
+        'receiverId': receiverId,
+        'message': [
+          {
+            'senderId': senderId,
+            'receiverId': receiverId,
+            'message': message,
+            'timestamp': Timestamp.now(),
+          },
+        ],
+        'timestamp': DateTime.now().millisecondsSinceEpoch,
+      });
+      print('after doc.set in sendAMessage function');
+      await getMessagesForDocumentId(chatId);
+    } catch (e) {
+      print('error sending message $e');
+    }
+
+  }
+
+  List<MessageModel> messageList = [];
+  getMessagesForDocumentId(String documentId) async {
+    final querySnapshot = await _firestore
+        .collection('messages')
+        .doc(documentId)
+        // .collection('message')
+        // .orderBy('timestamp', descending: true)
+        .get();
+    print('getting querySnapShot ${querySnapshot}');
+
+    try {
+      List<MessageModel> list = [];
+      final messageData = querySnapshot.data();
+      list = (messageData!['message'] as List<dynamic>).map((message) => MessageModel.fromJson(message))
+          .toList();
+      messageList.addAll(list);
+      print('messages is $messageList');
+      notifyListeners();
+
+    } catch (e) {
+      print('error getting messages $e');
+    }
+  }
 }

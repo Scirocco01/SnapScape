@@ -1,6 +1,8 @@
 import 'package:ehisaab_2/Config/size_config.dart';
+import 'package:ehisaab_2/View/BottomNavigationRouting/HomePage/home_page.dart';
 import 'package:ehisaab_2/View/bottom_navigation.dart';
 import 'package:ehisaab_2/ViewModel/auth_view_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -76,14 +78,14 @@ class _LoginScreenState extends State<LoginScreen> {
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.white),
                             onPressed: () async {
+                            final User? googleUser = await model.signInWithGo();
 
-
-                              if(await model.signInWithGo() != null){
-                                Navigator.push(
+                              if(googleUser != null){
+                                 Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                     UserCredentials(user: model.user,)));
+                                                     BottomNavigation()));
                                 print('signInFailed');
                               }
                               else{

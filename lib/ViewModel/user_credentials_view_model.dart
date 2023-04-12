@@ -21,10 +21,7 @@ class UserCredentialsViewModel extends ChangeNotifier{
 
   }
 
-  String name = '';
-   String userName = '';
-   File photo= File('');
-   String bio = '';
+
 
 
   UserDataModel userData = UserDataModel(name: '', userName: '', photo: File(''), bio:'');
@@ -59,7 +56,10 @@ class UserCredentialsViewModel extends ChangeNotifier{
 
 
 
+
+
   callSaveData(User? user)async{
+
     if(user?.uid != null) {
       final String? iD = user?.uid.toString();
       await _saveUserData(userData, iD!);
@@ -71,7 +71,8 @@ class UserCredentialsViewModel extends ChangeNotifier{
 
   Future<void> _saveUserData(UserDataModel userData, String userId) async {
     try {
-      await _firestore.collection('users').doc(userId).set({'name': userData.name,
+      await _firestore.collection('users').doc(userId).set({
+        'name': userData.name,
         'userName': userData.userName,
         'photoUrl': await _uploadPhoto(userData.photo),
         'bio': userData.bio

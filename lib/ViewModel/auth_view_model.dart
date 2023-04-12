@@ -2,13 +2,12 @@
 
 
 
-import 'package:ehisaab_2/View/login_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-import '../View/UserCredentials/user_credentials.dart';
-import '../View/bottom_navigation.dart';
+
 
 
 class AuthViewModel extends ChangeNotifier{
@@ -23,7 +22,15 @@ class AuthViewModel extends ChangeNotifier{
     if (user != null) {
       _user = user;
       notifyListeners();
-      return user;
+      if(await _checkIfUserExistsInFireStore(_user?.uid)) {
+        return user;
+      }
+      else{
+        print('user doesNot Exist in fireStore');
+        return null;
+      }
+
+
     }
     else{
       return null;
@@ -45,6 +52,7 @@ class AuthViewModel extends ChangeNotifier{
         );
         final UserCredential authResult = await _auth.signInWithCredential(credential);
         final User? user = authResult.user;
+        notifyListeners();
         print('this is the user ${user}');
         return user;
       }
@@ -52,6 +60,19 @@ class AuthViewModel extends ChangeNotifier{
     } catch (e) {
       print('catch error $e');
       return null;
+    }
+  }
+
+
+  Future<bool> _checkIfUserExistsInFireStore(String? userId) async {
+    final userSnapshot = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+    if(userSnapshot.exists){
+      print('userDoesExist in FireStore');
+      return true;
+
+    }
+    else{
+      return false;
     }
   }
 

@@ -116,10 +116,14 @@ class _HomePageState extends State<HomePage> {
   ];
 
   @override
-  void initState() {
+   initState() {
 
     super.initState();
-    viewModel.getProfilePhotoUrl();
+    getProfilePhotoAndName();
+  }
+
+  Future<void> getProfilePhotoAndName()async{
+    await viewModel.getProfilePhotoUrl();
   }
 
   @override
@@ -136,7 +140,7 @@ class _HomePageState extends State<HomePage> {
                         backgroundColor: Colors.white,
                         elevation: 0,
                         title: Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
+                          padding: const EdgeInsets.only(top: 8.0,right: 6),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -228,7 +232,7 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                     SizedBox(
                                       height: 100,
-                                      width: SizeConfig.screenWidth! * 0.80,
+                                      width: SizeConfig.screenWidth! * 0.78,
                                       child: ListView.builder(
                                           scrollDirection: Axis.horizontal,
                                           itemCount: myStories.length,
@@ -440,7 +444,7 @@ class _StoryState extends State<Story> {
           Stack(
             children: [
               Container(
-                padding: EdgeInsets.all(1),
+                padding: const EdgeInsets.all(1),
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(50),
                     border: Border.all(width: 2, color: Color(0xFFd3677c))),
@@ -452,7 +456,7 @@ class _StoryState extends State<Story> {
             ],
           ),
           Padding(
-            padding: EdgeInsets.only(top: 4.0),
+            padding: const EdgeInsets.only(top: 4.0),
             child: PrimaryText(
               text: widget.userName,
               size: 12,

@@ -1,6 +1,7 @@
 import 'package:ehisaab_2/View/BottomNavigationRouting/HomePage/home_page.dart';
 import 'package:ehisaab_2/View/BottomNavigationRouting/Notifications/notifications.dart';
 import 'package:ehisaab_2/View/BottomNavigationRouting/Profile/profile_page.dart';
+import 'package:ehisaab_2/View/login_screen.dart';
 import 'package:ehisaab_2/ViewModel/navigation_provider_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -84,8 +85,10 @@ class _BottomNavigationState extends State<BottomNavigation> {
                               IconButton(
                                   onPressed: () async {
                                     // model.changeCurrentTabTo('search');
-                                    await model.signOut().then((value) =>
-                                    Navigator.pop(context)
+                                    await model.signOut();
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => LoginScreen()),
                                     );
                                   },
                                   icon: const Icon(

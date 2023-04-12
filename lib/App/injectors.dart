@@ -5,6 +5,8 @@ import 'package:ehisaab_2/ViewModel/navigation_provider_view_model.dart';
 import 'package:ehisaab_2/ViewModel/user_credentials_view_model.dart';
 import 'package:get_it/get_it.dart';
 
+import '../ViewModel/message_view_model.dart';
+
 final GetIt injector = GetIt.instance;
 
 Future<void> initDependencies() async {
@@ -18,6 +20,8 @@ Future<void> initDependencies() async {
   injector.registerFactory<NavigationProvider>(() => NavigationProvider());
 
   injector.registerFactory<HomeViewModel>(() => HomeViewModel());
+
+  injector.registerFactory<MessageViewModel>(()=> MessageViewModel());
 
 
   injector.registerFactory<NotificationsViewModel>(() => NotificationsViewModel());
