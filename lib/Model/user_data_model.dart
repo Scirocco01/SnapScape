@@ -13,3 +13,11 @@ class UserDataModel{
   });
 
 }
+
+class MessageReceiverDataModel{
+  String name;
+  String userName;
+  String profilePhotoUrl;
+
+  MessageReceiverDataModel({required this.name,required this.userName,required this.profilePhotoUrl});
+}

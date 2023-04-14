@@ -5,6 +5,7 @@ import 'package:ehisaab_2/ViewModel/navigation_provider_view_model.dart';
 import 'package:ehisaab_2/ViewModel/user_credentials_view_model.dart';
 import 'package:get_it/get_it.dart';
 
+import '../ViewModel/add_post_view_model.dart';
 import '../ViewModel/message_view_model.dart';
 
 final GetIt injector = GetIt.instance;
@@ -25,5 +26,7 @@ Future<void> initDependencies() async {
 
 
   injector.registerFactory<NotificationsViewModel>(() => NotificationsViewModel());
+
+  injector.registerFactory<AddPostViewModel>(() =>AddPostViewModel());
   // injector.registerSingleton<HomeViewModel>(HomeViewModel());
 }

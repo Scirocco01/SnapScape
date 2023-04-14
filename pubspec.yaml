@@ -67,6 +67,11 @@ dependencies:
   image_picker: 0.7.5
   firebase_messaging: 14.2.1
 
+  #shared pref and cache_manager:
+  shared_preferences: ^2.0.12
+  flutter_cache_manager: ^3.3.0
+
+
 
 
 

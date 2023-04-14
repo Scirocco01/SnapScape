@@ -65,65 +65,21 @@ class _HomePageState extends State<HomePage> {
 
   final HomeViewModel viewModel = injector<HomeViewModel>();
 
-  List<Feed> myFeed = [
-    const Feed(
-        name: 'sanan',
-        nickName: 'sin',
-        avatarColor: Colors.green,
-        url: 'https://media.timeout.com/images/100004361/750/562/image.jpg',
-        avatarUrl:
-            'https://cdn.pixabay.com/photo/2016/11/22/21/42/woman-1850703__340.jpg',
-        likes: 224,
-        comments: 55,
-        tag:
-            'paris is the city of lights and french limoziu, do enjoy you glass love de paris ',
-        timeStamp: 10),
-    const Feed(
-        name: 'faraz',
-        nickName: 'sin',
-        avatarColor: Colors.green,
-        url: 'https://pixlr.com/images/index/remove-bg.webp',
-        avatarUrl:
-            'https://wallpapers.com/images/hd/cool-profile-picture-ld8f4n1qemczkrig.jpg',
-        likes: 224,
-        comments: 59,
-        tag: 'hi this is a tag repeat reset ',
-        timeStamp: 10),
-    const Feed(
-        name: 'Hush',
-        nickName: 'sin',
-        avatarColor: Colors.green,
-        url:
-            'https://hips.hearstapps.com/hmg-prod/images/alpe-di-siusi-sunrise-with-sassolungo-or-langkofel-royalty-free-image-1623254127.jpg',
-        avatarUrl:
-            'https://1fid.com/wp-content/uploads/2022/07/aesthetic-profile-picture-2-1024x1024.jpg',
-        likes: 224,
-        comments: 4,
-        tag:
-            'to that unforgettable trip to Japan 🇯🇵🎌 I still cant believe I got to experience the beauty and culture of such an amazing country. From the bustling streets of Tokyo to the peaceful shrines of Kyoto, every moment was truly magical. Traveling has opened my eyes to the worlds wonders and taught me so much about myself. Cant wait for the next adventure! ',
-        timeStamp: 10),
-  ];
-
-  List<Story> myStories = [
-    const Story(
-        storyUrl:
-            'https://thumbs.dreamstime.com/z/random-click-squirrel-wire-random-picture-cute-squirrel-219506797.jpg',
-        userName: 'Ehtisham'),
-    const Story(
-        storyUrl:
-            'https://edit.org/images/cat/instagram-stories-big-2019101613.jpg',
-        userName: 'belluicha')
-  ];
 
   @override
    initState() {
 
     super.initState();
     getProfilePhotoAndName();
+    getAllDoc();
   }
 
   Future<void> getProfilePhotoAndName()async{
     await viewModel.getProfilePhotoUrl();
+  }
+  getAllDoc()async{
+    await viewModel.getAllDocumentIds(viewModel.user!.uid);
+    await viewModel.getMessageReceivers(viewModel.receiverId);
   }
 
   @override
@@ -193,7 +149,7 @@ class _HomePageState extends State<HomePage> {
                                              CircleAvatar(
                                               radius: 35,
                                               backgroundImage: model.profilePhotoUrl != ""?NetworkImage(model.profilePhotoUrl):
-                                                  NetworkImage('https://i.scdn.co/image/ab6761610000e5ebce202eea14763b8b7696936e')
+                                                  const NetworkImage('https://i.scdn.co/image/ab6761610000e5ebce202eea14763b8b7696936e')
                                             ),
                                             Positioned(
                                               bottom: 0,

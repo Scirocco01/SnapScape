@@ -1,3 +1,4 @@
+import 'package:ehisaab_2/View/BottomNavigationRouting/AddPost/add_post.dart';
 import 'package:ehisaab_2/View/BottomNavigationRouting/HomePage/home_page.dart';
 import 'package:ehisaab_2/View/BottomNavigationRouting/Notifications/notifications.dart';
 import 'package:ehisaab_2/View/BottomNavigationRouting/Profile/profile_page.dart';
@@ -62,6 +63,8 @@ class _BottomNavigationState extends State<BottomNavigation> {
                       const NotificationsRoute(setupPageRoute: 'dashboard/notifications'),
                     if(model.currentTab == 'profile')
                       const ProfileRoute(setupPageRoute: 'dashboard/profile'),
+                    if(model.currentTab == 'addPost')
+                      const AddPostRoute(setupPageRoute: 'dashboard/addPost'),
                     Container(
                       decoration: const BoxDecoration(
                           color: Colors.white,
@@ -96,7 +99,9 @@ class _BottomNavigationState extends State<BottomNavigation> {
                                     size: 30,
                                   )),
                               IconButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    model.changeCurrentTabTo('addPost');
+                                  },
                                   icon: const Icon(
                                     Icons.add_box,
                                     size: 30,

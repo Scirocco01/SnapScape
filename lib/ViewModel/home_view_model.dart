@@ -1,10 +1,15 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ehisaab_2/Model/user_data_model_for_message.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Model/messages_model.dart';
+import '../Model/user_data_model.dart';
 
 class HomeViewModel extends ChangeNotifier {
   User? user = FirebaseAuth.instance.currentUser;
@@ -62,8 +67,27 @@ class HomeViewModel extends ChangeNotifier {
   getProfilePhotoUrl() async {
     _userNameForHomePage();
     profilePhotoUrl = await _getPhotoFromStorage();
+    // await saveImageToSharedPref(profilePhotoUrl,user!.uid);
+    saveImageToSharedPref(profilePhotoUrl, user!.uid);
     notifyListeners();
     print('getProfileFunc successfully executed photo uri is $profilePhotoUrl');
+  }
+
+  /// to get save image in memory using shared prefs and cache_manage
+
+  Future<void> saveImageToSharedPref(String imageUrl,String userName)async{
+    try{
+      var file = await DefaultCacheManager().getSingleFile(imageUrl);
+      //convert to bytes
+      List<int> imageByte = await file.readAsBytes();
+      //save as bytes
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('userImage',base64Encode(imageByte));
+      prefs.setString('userName', userName);
+    }
+    catch(e){
+      print('an error occurred saving image to shared prefs error is = $e');
+    }
   }
 
   /// for message system
@@ -72,15 +96,6 @@ class HomeViewModel extends ChangeNotifier {
   final CollectionReference messageCollection =
       FirebaseFirestore.instance.collection('messages');
 
-  // implementing a function to send the message
-  Future<void> sendMessage(String senderId, receiverID, String textMessage) {
-    return messageCollection.add({
-      'senderId': senderId,
-      'receiverId': receiverID,
-      'messageText': textMessage,
-      'timeStamp': FieldValue.serverTimestamp()
-    });
-  }
 
   Stream<QuerySnapshot> getMessagesStream(String senderId, String receiverId) {
     return messageCollection
@@ -110,9 +125,9 @@ class HomeViewModel extends ChangeNotifier {
           .where('userName', isLessThan: '${userName}z')
           .get();
 
-      querySnapshot.docs.forEach((doc) {
+      for (var doc in querySnapshot.docs) {
         matchMakingUsers = doc.id;
-      });
+      }
       if (matchMakingUsers.isEmpty) {
         userName = userName.substring(0, userName.length - 1);
       }
@@ -177,89 +192,59 @@ class HomeViewModel extends ChangeNotifier {
   ///For Message 2.0
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  List<String> allDocId = [];
+  List<String> receiverId = [];
 
-  checkIfMessageThreadExistsAndPush(
-      String userId, String receiverId, String message) async {
-    _firestore.collection('messages');
-    final querySnapshot = await FirebaseFirestore.instance
-        .collection('messages')
-        .where('senderId', isEqualTo: userId)
-        .where('receiverId', isEqualTo: receiverId)
+  List<MessageReceiverDataModel> messageReceivers = [];
+
+  getAllDocumentIds(String mySenderId) async {
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection('chats')
         .get();
 
-    final existingDoc =
-        querySnapshot.docs.isEmpty ? null : querySnapshot.docs.first;
+    List<String> documentIds = [];
+    for (var doc in snapshot.docs) {
+      String docId = doc.id;
+      List<String> ids = docId.split("+");
+      if (ids[0] == mySenderId || ids[1] == mySenderId) {
+        if(ids[0] == mySenderId){
+          receiverId.add(ids[1]);
+        }
+        else{
+          receiverId.add(ids[0]);
+        }
 
-    if (existingDoc != null) {
-      await existingDoc.reference.collection('messages').add({
-        'senderId': userId,
-        'receiverId': receiverId,
-        'message': message,
-        'timestamp': Timestamp.now(),
-      });
-    } else {
-      await _firestore.collection('messages').add({
-        'senderId': userId,
-        'receiverId': receiverId,
-        'messages': [
-          {
-            'senderId': userId,
-            'receiverId': receiverId,
-            'message': message,
-            'timestamp': Timestamp.now(),
-          },
-        ],
-      });
-    }
-  }
-
-  //Send Message Function
-  sendAMessage(String senderId, String receiverId, String message) async {
-    String chatId = '$senderId+$receiverId';
-    CollectionReference messageCollection = _firestore.collection('messages');
-    try {
-      await messageCollection.doc(chatId).set({
-        'senderId': senderId,
-        'receiverId': receiverId,
-        'message': [
-          {
-            'senderId': senderId,
-            'receiverId': receiverId,
-            'message': message,
-            'timestamp': Timestamp.now(),
-          },
-        ],
-        'timestamp': DateTime.now().millisecondsSinceEpoch,
-      });
-      print('after doc.set in sendAMessage function');
-      await getMessagesForDocumentId(chatId);
-    } catch (e) {
-      print('error sending message $e');
+        documentIds.add(docId);
+        notifyListeners();
+      }
     }
 
+    allDocId = documentIds;
+    notifyListeners();
   }
 
-  List<MessageModel> messageList = [];
-  getMessagesForDocumentId(String documentId) async {
-    final querySnapshot = await _firestore
-        .collection('messages')
-        .doc(documentId)
-        // .collection('message')
-        // .orderBy('timestamp', descending: true)
-        .get();
-    print('getting querySnapShot ${querySnapshot}');
 
-    try {
-      List<MessageModel> list = [];
-      final messageData = querySnapshot.data();
-      list = (messageData!['message'] as List<dynamic>).map((message) => MessageModel.fromJson(message))
-          .toList();
-      messageList.addAll(list);
-      print('messages is $messageList');
-      notifyListeners();
 
-    } catch (e) {
-      print('error getting messages $e');
+  Future<void> getMessageReceivers(List<String> receiverIDs) async {
+    for(var i = 0;i<receiverIDs.length;i++){
+      DocumentSnapshot doc = await _firestore
+          .collection('users')
+          .doc(receiverIDs[i])
+          .get();
+
+      if (doc.exists) {
+        messageReceivers.add(MessageReceiverDataModel(
+          name: doc['name'],
+          userName: doc['userName'],
+          profilePhotoUrl: doc['photoUrl'],
+        ));
+        print('message receiver Added ${messageReceivers}');
+
+      } else {
+        print('No document exists with ID ${receiverIDs[i]}');
+      }
     }
+    notifyListeners();
   }
+
 }

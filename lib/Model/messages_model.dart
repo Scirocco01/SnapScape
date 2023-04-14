@@ -1,6 +1,7 @@
 
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ehisaab_2/Model/user_data_model.dart';
 
 class MessageModel{
   String senderId;
@@ -19,3 +20,4 @@ class MessageModel{
   }
 
 }
+
