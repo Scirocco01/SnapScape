@@ -87,12 +87,8 @@ class _BottomNavigationState extends State<BottomNavigation> {
                                   )),
                               IconButton(
                                   onPressed: () async {
-                                    // model.changeCurrentTabTo('search');
-                                    await model.signOut();
-                                    Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(builder: (context) => LoginScreen()),
-                                    );
+                                    model.changeCurrentTabTo('search');
+
                                   },
                                   icon: const Icon(
                                     Icons.search,

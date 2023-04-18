@@ -30,7 +30,7 @@ class _SearchTabState extends State<SearchTab> {
                         size: 30,
                       )),
                   SizedBox(
-                    width: 300,
+                    width: MediaQuery.of(context).size.width * 0.70,
                     height: 40,
                     child: TextField(
                       decoration: InputDecoration(

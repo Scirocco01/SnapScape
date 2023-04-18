@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ehisaab_2/App/injectors.dart';
 import 'package:ehisaab_2/Config/size_config.dart';
+import 'package:ehisaab_2/Model/feed_data_model.dart';
 import 'package:ehisaab_2/ViewModel/home_view_model.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
@@ -65,19 +67,57 @@ class _HomePageState extends State<HomePage> {
 
   final HomeViewModel viewModel = injector<HomeViewModel>();
 
+  List<FeedDataModel> _feedDataList = [];
+
+  Future<void> fetchAndDisplayPosts() async {
+    print('function _feedDataList');
+    _feedDataList = await viewModel.fetchFeedData();
+    print('function after _feedDataList');
+  }
+
+  List<Story> myStories = [
+    const Story(
+        storyUrl:
+            'https://thumbs.dreamstime.com/z/random-click-squirrel-wire-random-picture-cute-squirrel-219506797.jpg',
+        userName: 'Ehtisham'),
+    const Story(
+        storyUrl:
+            'https://edit.org/images/cat/instagram-stories-big-2019101613.jpg',
+        userName: 'belluicha')
+  ];
+
+  List<Widget> feedWidgetList = [];
+
+  _addDataToFeeDList() {
+    for (int i = 0; i < _feedDataList.length; i++) {
+      feedWidgetList.add(Feed(feed: _feedDataList[i]));
+    }
+  }
+
+  bool _isLoading = false;
 
   @override
-   initState() {
-
+  initState() {
+    setState(() {
+      _isLoading = true;
+    });
     super.initState();
     getProfilePhotoAndName();
     getAllDoc();
+    fetchAndDisplayPosts().then((value) {
+      setState(() {
+        _addDataToFeeDList();
+        _isLoading = false;
+        print('feed widget added');
+      });
+    });
   }
 
-  Future<void> getProfilePhotoAndName()async{
+  Future<void> getProfilePhotoAndName() async {
     await viewModel.getProfilePhotoUrl();
   }
-  getAllDoc()async{
+
+  getAllDoc() async {
     await viewModel.getAllDocumentIds(viewModel.user!.uid);
     await viewModel.getMessageReceivers(viewModel.receiverId);
   }
@@ -96,7 +136,7 @@ class _HomePageState extends State<HomePage> {
                         backgroundColor: Colors.white,
                         elevation: 0,
                         title: Padding(
-                          padding: const EdgeInsets.only(top: 8.0,right: 6),
+                          padding: const EdgeInsets.only(top: 8.0, right: 6),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -112,11 +152,10 @@ class _HomePageState extends State<HomePage> {
                                 angle: -30 * 3.1415926535 / 180,
                                 child: IconButton(
                                     onPressed: () {
-
                                       if (_pageController.hasClients) {
                                         _pageController.animateToPage(1,
-                                            duration:
-                                                const Duration(milliseconds: 600),
+                                            duration: const Duration(
+                                                milliseconds: 600),
                                             curve: Curves.decelerate);
                                       }
                                     },
@@ -134,87 +173,118 @@ class _HomePageState extends State<HomePage> {
                         padding:
                             const EdgeInsets.only(top: 4.0, left: 0, right: 0),
                         child: SingleChildScrollView(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(left: 8.0),
-                                child: Row(
-                                  children: [
-                                    Column(
-                                      children: [
-                                        Stack(
+                            child: !_isLoading
+                                ? Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 8.0),
+                                        child: Row(
                                           children: [
-                                             CircleAvatar(
-                                              radius: 35,
-                                              backgroundImage: model.profilePhotoUrl != ""?NetworkImage(model.profilePhotoUrl):
-                                                  const NetworkImage('https://i.scdn.co/image/ab6761610000e5ebce202eea14763b8b7696936e')
-                                            ),
-                                            Positioned(
-                                              bottom: 0,
-                                              right: 0,
-                                              child: Container(
-                                                width: 30,
-                                                height: 30,
-                                                decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    color: Colors.blue,
-                                                    border: Border.all(
-                                                        color: Colors.white)),
-                                                child: const Center(
-                                                  child: Text(
-                                                    '+',
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                          FontWeight.w500,
+                                            Column(
+                                              children: [
+                                                Stack(
+                                                  children: [
+                                                    CircleAvatar(
+                                                        radius: 35,
+                                                        backgroundImage: model
+                                                                    .profilePhotoUrl !=
+                                                                ""
+                                                            ? NetworkImage(model
+                                                                .profilePhotoUrl)
+                                                            : const NetworkImage(
+                                                                'https://i.scdn.co/image/ab6761610000e5ebce202eea14763b8b7696936e')),
+                                                    Positioned(
+                                                      bottom: 0,
+                                                      right: 0,
+                                                      child: Container(
+                                                        width: 30,
+                                                        height: 30,
+                                                        decoration: BoxDecoration(
+                                                            shape:
+                                                                BoxShape.circle,
+                                                            color: Colors.blue,
+                                                            border: Border.all(
+                                                                color: Colors
+                                                                    .white)),
+                                                        child: const Center(
+                                                          child: Text(
+                                                            '+',
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontSize: 20,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
                                                     ),
-                                                  ),
+                                                  ],
                                                 ),
-                                              ),
+                                                const Padding(
+                                                  padding:
+                                                      EdgeInsets.only(top: 4.0),
+                                                  child: PrimaryText(
+                                                    text: 'Your Story',
+                                                    size: 12,
+                                                  ),
+                                                )
+                                              ],
                                             ),
+                                            SizedBox(
+                                              height: 100,
+                                              width: SizeConfig.screenWidth! *
+                                                  0.78,
+                                              child: ListView.builder(
+                                                  scrollDirection:
+                                                      Axis.horizontal,
+                                                  itemCount: myStories.length,
+                                                  itemBuilder:
+                                                      (context, index) {
+                                                    return Story(
+                                                        storyUrl:
+                                                            myStories[index]
+                                                                .storyUrl,
+                                                        userName:
+                                                            myStories[index]
+                                                                .userName);
+                                                  }),
+                                            )
                                           ],
                                         ),
-                                        const Padding(
-                                          padding: EdgeInsets.only(top: 4.0),
-                                          child: PrimaryText(
-                                            text: 'Your Story',
-                                            size: 12,
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: 100,
-                                      width: SizeConfig.screenWidth! * 0.78,
-                                      child: ListView.builder(
-                                          scrollDirection: Axis.horizontal,
-                                          itemCount: myStories.length,
-                                          itemBuilder: (context, index) {
-                                            return Story(
-                                                storyUrl:
-                                                    myStories[index].storyUrl,
-                                                userName:
-                                                    myStories[index].userName);
-                                          }),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              const Divider(
-                                color: Colors.grey,
-                              ),
-                              Wrap(
-                                spacing: 8.0, // space between adjacent widgets
-                                runSpacing:
-                                    50.0, // space between lines of widgets
-                                children: myFeed,
-                              )
-                            ],
-                          ),
-                        ),
+                                      ),
+                                      const Divider(
+                                        color: Colors.grey,
+                                      ),
+
+                                      Wrap(
+                                        spacing:
+                                            8.0, // space between adjacent widgets
+                                        runSpacing:
+                                            50.0, // space between lines of widgets
+                                        children: feedWidgetList,
+                                      )
+                                      // Container(
+                                      //
+                                      //     height: 700,
+                                      //     width: 500,
+                                      //     child:
+                                      // ListView.builder(
+                                      //   itemCount: _feedDataList.length,
+                                      //     itemBuilder: (context,index){
+                                      //       return Feed(feed: _feedDataList[index]);
+                                      //     }))
+                                    ],
+                                  )
+                                : const Center(
+                                    child: CircularProgressIndicator(),
+                                  )),
                       ),
                     ),
                     MessagingPage(
@@ -227,34 +297,32 @@ class _HomePageState extends State<HomePage> {
 }
 
 class Feed extends StatefulWidget {
-  const Feed(
-      {Key? key,
-      required this.name,
-      required this.nickName,
-      required this.avatarColor,
-      required this.url,
-      required this.likes,
-      required this.comments,
-      required this.tag,
-      required this.timeStamp,
-      required this.avatarUrl})
-      : super(key: key);
-
-  final String name;
-  final String nickName;
-  final Color avatarColor;
-  final String url;
-  final String avatarUrl;
-  final int likes;
-  final int comments;
-  final String tag;
-  final int timeStamp;
+  const Feed({
+    Key? key,
+    required this.feed,
+  }) : super(key: key);
+  final FeedDataModel feed;
 
   @override
   State<Feed> createState() => _FeedState();
 }
 
 class _FeedState extends State<Feed> {
+  final ValueNotifier<bool> _isLiked = ValueNotifier<bool>(false);
+  bool _showHeart = false;
+  int likes = 0;
+
+  void _toggleHeart() {
+    setState(() {
+      _showHeart = true;
+    });
+    Future.delayed(const Duration(milliseconds: 800), () {
+      setState(() {
+        _showHeart = false;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -267,15 +335,15 @@ class _FeedState extends State<Feed> {
               child: Row(
                 children: [
                   CircleAvatar(
-                    backgroundColor: widget.avatarColor,
+                    backgroundColor: Colors.blue,
                     radius: 15,
-                    backgroundImage: NetworkImage(widget.avatarUrl),
+                    backgroundImage: NetworkImage(widget.feed.profileUrl),
                   ),
                   SizedBox(
                     width: SizeConfig.screenWidth! * 0.02,
                   ),
                   PrimaryText(
-                    text: '${widget.name} ',
+                    text: '${widget.feed.name} ',
                     size: 16,
                   ),
                   const Expanded(child: SizedBox()),
@@ -284,20 +352,62 @@ class _FeedState extends State<Feed> {
                 ],
               ),
             ),
-            Container(
-              width: double.infinity,
-              height: SizeConfig.screenHeight! * 0.60,
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                      image: NetworkImage(widget.url), fit: BoxFit.cover)),
+            GestureDetector(
+              onDoubleTap: () {
+                setState(() {
+                  _isLiked.value = !_isLiked.value;
+                  if(_isLiked.value){
+                    likes += 1;
+                    _toggleHeart();
+                  }
+
+                });
+              },
+              child: SizedBox(
+                width: double.infinity,
+                height: SizeConfig.screenHeight! * 0.60,
+                child: Stack(
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      height: SizeConfig.screenHeight! * 0.60,
+                      color: Colors.black, // or another background color
+                    ),
+                    Center(
+                      child: CachedNetworkImage(
+                        imageUrl: widget.feed.postUrl,
+                        placeholder: (context, url) =>
+                            CircularProgressIndicator(),
+                        errorWidget: (context, url, error) => Icon(Icons.error),
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                    if (_showHeart)
+                      Center(
+                        child: AnimatedOpacity(
+                          opacity: _showHeart ? 1.0 : 0.0,
+                          duration: const Duration(milliseconds: 300),
+                          child: const Icon(
+                            Icons.favorite,
+                            size: 80,
+                            color: Colors.red,
+                          ),
+                        ),
+                      )
+                  ],
+                ),
+              ),
             ),
             Padding(
               padding: const EdgeInsets.only(left: 8.0, right: 8.0),
               child: Row(
                 children: [
-                  const Icon(
-                    Icons.favorite_border_outlined,
+                  Icon(
+                    _isLiked.value
+                        ? Icons.favorite
+                        : Icons.favorite_border_outlined,
                     size: 28,
+                    color: _isLiked.value ? Colors.red : Colors.black,
                   ),
                   // PrimaryText(text: '${widget.likes}',),
                   Padding(
@@ -334,7 +444,7 @@ class _FeedState extends State<Feed> {
             Padding(
               padding: const EdgeInsets.only(left: 12.0, right: 8.0, top: 4),
               child: PrimaryText(
-                text: '${widget.likes} likes',
+                text: '${likes} likes',
                 size: 14,
                 fontWeight: FontWeight.w500,
               ),
@@ -349,14 +459,14 @@ class _FeedState extends State<Feed> {
                   ),
                   children: [
                     TextSpan(
-                      text: widget.name,
+                      text: widget.feed.nickName,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.black87,
                       ),
                     ),
                     TextSpan(
-                      text: ' ${widget.tag}',
+                      text: ' ${widget.feed.caption}',
                     ),
                   ],
                 ),
@@ -368,7 +478,7 @@ class _FeedState extends State<Feed> {
             Padding(
               padding: const EdgeInsets.only(left: 8.0, right: 8.0),
               child: PrimaryText(
-                text: '${widget.timeStamp} minutes ago',
+                text: '${widget.feed.timeStamp} minutes ago',
                 size: 12,
                 color: Colors.grey,
               ),

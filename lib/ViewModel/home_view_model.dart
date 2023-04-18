@@ -8,7 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../Model/messages_model.dart';
+import '../Model/feed_data_model.dart';
 import '../Model/user_data_model.dart';
 
 class HomeViewModel extends ChangeNotifier {
@@ -238,7 +238,7 @@ class HomeViewModel extends ChangeNotifier {
           userName: doc['userName'],
           profilePhotoUrl: doc['photoUrl'],
         ));
-        print('message receiver Added ${messageReceivers}');
+
 
       } else {
         print('No document exists with ID ${receiverIDs[i]}');
@@ -246,5 +246,83 @@ class HomeViewModel extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+
+  /// to show the feeds below are the Functions
+
+  Future<List<String>> _fetchUserInfo(String userId) async {
+    List<String> list = [];
+    try {
+      
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
+      String name = userDoc.get('name');
+      String userName = userDoc.get('userName');
+      String photoUrl = userDoc.get('photoUrl');
+      list = [name,userName,photoUrl];
+
+
+      return  list;
+
+    } catch (e) {
+      print('Error fetching user info: $e');
+      return list;
+    }
+  }
+
+  Future<List<FeedDataModel>> fetchFeedData() async {
+    List<FeedDataModel> feedDataList = [];
+    List<String> userInfo = [];
+
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('posts').orderBy('timestamp', descending: true).get();
+
+      for (var doc in querySnapshot.docs) {
+        String docId = doc.id;
+        List<String> parts = docId.split('+');
+        String userId = parts[0];
+
+        userInfo = await _fetchUserInfo(userId);
+
+        
+        if(userInfo.isEmpty) {
+          FeedDataModel feedData = FeedDataModel(
+            name: 'Sanan',
+            nickName: 'sana_sk',
+            profileUrl: 'https://1fid.com/wp-content/uploads/2022/06/Twitter-profile-picture-1024x1022.jpg',
+            postUrl: doc['imageUrl'],
+            likes: doc['likes'],
+            comments: doc['comments'].length,
+            caption: doc['caption'],
+            timeStamp: (doc['timestamp'] as Timestamp).millisecondsSinceEpoch,
+          );
+          feedDataList.add(feedData);
+        }
+        else{
+          FeedDataModel feedData = FeedDataModel(
+            name: userInfo[0],
+            nickName: userInfo[1],
+            profileUrl: userInfo[2],
+            postUrl: doc['imageUrl'],
+            likes: doc['likes'],
+            comments: doc['comments'].length,
+            caption: doc['caption'],
+            timeStamp: (doc['timestamp'] as Timestamp).millisecondsSinceEpoch,
+          );
+          feedDataList.add(feedData);
+        }
+      }
+    } catch (e) {
+      print('Error fetching feed data: $e');
+    }
+
+    return feedDataList;
+  }
+
+
+
+
 
 }

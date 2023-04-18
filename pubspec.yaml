@@ -60,8 +60,7 @@ dependencies:
   flutter_svg: ^1.1.6
 
 
-  flutter_staggered_grid_view: ^0.6.2
-
+  flutter_staggered_grid_view: ^0.4.0
 
   #image picker to images from gallery
   image_picker: 0.7.5
@@ -70,6 +69,7 @@ dependencies:
   #shared pref and cache_manager:
   shared_preferences: ^2.0.12
   flutter_cache_manager: ^3.3.0
+  cached_network_image: ^3.1.0
 
 
 

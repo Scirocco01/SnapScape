@@ -29,24 +29,35 @@ class AddPostViewModel extends ChangeNotifier {
 
   Future<void> savePost(File image, String caption) async {
     CollectionReference postsRef = FirebaseFirestore.instance.collection('posts');
-    final imageUrl = await _addPostToFireBaseStorage(image);
-      try{
-        postsRef.add({
-          'imageUrl': imageUrl,
-          'caption': caption,
-          'comments': [], // Initialize as an empty list
-          'liked-by': <String>[],
-          'likes': 0, // Initialize as 0
-          'totalShares': 0, // Initialize as 0
-          'timestamp': FieldValue.serverTimestamp(),
-          'userID': user!.uid// Set the server timestamp
-          // Add other fields, like 'userId', etc.
-        });
+    String documentId = '${user!.uid}+${DateTime.now().millisecondsSinceEpoch}';
 
-      }catch(e){
-        print('error occurred $e');
-      }
+    final imageUrl = await _addPostToFireBaseStorage(image);
+    try {
+      // Use the 'doc()' method to create a reference to a document with the custom ID
+      DocumentReference docRef = postsRef.doc(documentId);
+
+      // Set the document data using 'set()' instead of 'add()'
+      await docRef.set({
+        'imageUrl': imageUrl,
+        'caption': caption,
+        'comments': [], // Initialize as an empty list
+        'liked-by': <String>[],
+        'likes': 0, // Initialize as 0
+        'totalShares': 0, // Initialize as 0
+        'timestamp': FieldValue.serverTimestamp(),
+        'userID': user!.uid // Set the server timestamp
+      });
+    } catch (e) {
+      print('error occurred $e');
+    }
   }
+
+
+
+
+
+
+
 
 
 

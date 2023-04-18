@@ -1,9 +1,17 @@
-import 'dart:math';
 
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ehisaab_2/Config/text.dart';
 import 'package:ehisaab_2/View/BottomNavigationRouting/Search/search_tab.dart';
+import 'package:ehisaab_2/ViewModel/search_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+
+import 'package:provider/provider.dart';
+
+import '../../../App/injectors.dart';
+import '../../../Config/size_config.dart';
+import '../../../Model/feed_data_model.dart';
 
 
 class SearchPageRoute extends StatefulWidget {
@@ -56,16 +64,40 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
+
+  final SearchViewModel viewModel = injector<SearchViewModel>();
+
+
+  List<FeedDataModel> _feedDataList = [];
+
+  Future<void> fetchAndDisplayPosts() async {
+     await viewModel.fetchFeedData();
+
+  }
+
+  @override
+  void initState() {
+
+    super.initState();
+    fetchAndDisplayPosts().then((value){
+      print(viewModel.feedDataList);
+    });
+  }
+  
+  
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return ChangeNotifierProvider<SearchViewModel>(
+        create: (context) => viewModel,
+        child: Consumer<SearchViewModel>(
+        builder: (context, model, child) => Scaffold(
       body: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             GestureDetector(
               onTap: () {
-                print('should naviagate tonext screen');
+
 
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => const SearchTab()));
@@ -92,41 +124,72 @@ class _SearchPageState extends State<SearchPage> {
               ),
             ),
             Expanded(
-                child: GridView.custom(
-                    gridDelegate: SliverQuiltedGridDelegate(
-                      crossAxisCount: 4,
-                      mainAxisSpacing: 4,
-                      crossAxisSpacing: 4,
-                      repeatPattern: QuiltedGridRepeatPattern.inverted,
-                      pattern: [
-                        QuiltedGridTile(2, 2),
-                        QuiltedGridTile(1, 1),
-                        QuiltedGridTile(1, 1),
-                        QuiltedGridTile(1, 2),
-                      ],
-                    ),
-                    childrenDelegate: SliverChildBuilderDelegate(
-                      (context, index) => Tile(index: index),
-                    ))),
+                child:StaggeredGridView.countBuilder(
+                    padding: const EdgeInsets.all(4),
+                    crossAxisCount: 4,
+                    itemCount: model.feedDataList.length,
+                    itemBuilder: (BuildContext context, int index) => Tile(
+                      index: index,
+                      data: model.feedDataList[index],
+                ),
+                  staggeredTileBuilder: (int index) =>
+                      StaggeredTile.count(2,index.isEven?3:2),
+                  mainAxisSpacing:4,
+                  crossAxisSpacing: 4,
+                ),
+
+
+            ),
           ]),
-    );
+    )));
   }
 }
 
 class Tile extends StatelessWidget {
   final int index;
+  final FeedDataModel data;
 
-  const Tile({Key? key, required this.index}) : super(key: key);
+  const Tile({Key? key, required this.index, required this.data}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final rng = Random(index);
-    final width = MediaQuery
-        .of(context)
-        .size
-        .width;
-    final height = rng.nextDouble() * 100 * 100;
-    final url = '//source.unsplash.com/random/400x600';
-    return Container(child: Center(child: PrimaryText(text: '$index',),),);
+    return SizedBox(
+      child: Stack(
+        children: [
+          Container(
+            width: double.infinity,
+            height: SizeConfig.screenHeight! * 0.60,
+            color: Colors.black, // or another background color
+          ),
+          Center(
+            child: CachedNetworkImage(
+              imageUrl: data.postUrl,
+              placeholder: (context, url) =>
+                  CircularProgressIndicator(),
+              errorWidget: (context, url, error) => Icon(Icons.error),
+              fit: BoxFit.fill,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
+
+
+// GridView.custom(
+// gridDelegate: SliverQuiltedGridDelegate(
+// crossAxisCount: 4,
+// mainAxisSpacing: 4,
+// crossAxisSpacing: 4,
+// repeatPattern: QuiltedGridRepeatPattern.inverted,
+// pattern: [
+// QuiltedGridTile(2, 2),
+// QuiltedGridTile(1, 1),
+// QuiltedGridTile(1, 1),
+// QuiltedGridTile(1, 2),
+// ],
+// ),
+// childrenDelegate: SliverChildBuilderDelegate(
+// (context, index) => Tile(index: index, data: _feedDataList[index],),
+// ))
