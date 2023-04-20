@@ -61,6 +61,7 @@ class SearchViewModel extends ChangeNotifier{
             comments: doc['comments'].length,
             caption: doc['caption'],
             timeStamp: (doc['timestamp'] as Timestamp).millisecondsSinceEpoch,
+            postId: doc.id, userId: '',
           );
           feedDataList.add(feedData);
           notifyListeners();
@@ -75,6 +76,8 @@ class SearchViewModel extends ChangeNotifier{
             comments: doc['comments'].length,
             caption: doc['caption'],
             timeStamp: (doc['timestamp'] as Timestamp).millisecondsSinceEpoch,
+            postId: doc.id,
+            userId: userId,
           );
           feedDataList.add(feedData);
           notifyListeners();

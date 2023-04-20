@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ehisaab_2/App/injectors.dart';
 import 'package:ehisaab_2/Config/size_config.dart';
 import 'package:ehisaab_2/Model/feed_data_model.dart';
+import 'package:ehisaab_2/View/Components/comments_screen/comments_screen.dart';
 import 'package:ehisaab_2/ViewModel/home_view_model.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
@@ -90,7 +92,13 @@ class _HomePageState extends State<HomePage> {
 
   _addDataToFeeDList() {
     for (int i = 0; i < _feedDataList.length; i++) {
-      feedWidgetList.add(Feed(feed: _feedDataList[i]));
+      feedWidgetList.add(Feed(feed: _feedDataList[i],
+        incrementLike: () {
+        viewModel.incrementLikePost(_feedDataList[i].postId, _feedDataList[i].userId);
+        }, model: viewModel, decrementLike: (){
+            viewModel.decrementLikePost(_feedDataList[i].postId, _feedDataList[i].userId);
+          })
+      );
     }
   }
 
@@ -106,8 +114,9 @@ class _HomePageState extends State<HomePage> {
     getAllDoc();
     fetchAndDisplayPosts().then((value) {
       setState(() {
-        _addDataToFeeDList();
         _isLoading = false;
+        _addDataToFeeDList();
+
         print('feed widget added');
       });
     });
@@ -299,9 +308,12 @@ class _HomePageState extends State<HomePage> {
 class Feed extends StatefulWidget {
   const Feed({
     Key? key,
-    required this.feed,
+    required this.feed, required this.incrementLike, required this.model, required this.decrementLike,
   }) : super(key: key);
   final FeedDataModel feed;
+  final Function incrementLike;
+  final Function decrementLike;
+  final HomeViewModel model;
 
   @override
   State<Feed> createState() => _FeedState();
@@ -323,9 +335,37 @@ class _FeedState extends State<Feed> {
     });
   }
 
+  checkIfAlreadyLikedByUser()async{
+    bool likedByUser = false;
+    likedByUser = await widget.model.checkForLikedBy(widget.feed.postId, widget.feed.userId);
+    setState((){
+      _isLiked.value = likedByUser;
+    });
+  }
+  String currentUserName = '';
+  String currentUserProfileUrl = '';
+
+  _getCurrentUserInfo() async {
+   final List<String> list = await widget.model.getCurrentUserDat();
+   currentUserName = list[0];
+   currentUserProfileUrl = list[1];
+  }
+
+  @override
+  void initState() {
+
+    super.initState();
+    checkIfAlreadyLikedByUser();
+    likes = widget.feed.likes;
+    setState(() {
+      _getCurrentUserInfo();
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
         width: double.infinity,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -359,6 +399,11 @@ class _FeedState extends State<Feed> {
                   if(_isLiked.value){
                     likes += 1;
                     _toggleHeart();
+                    widget.incrementLike();
+                  }
+                  else{
+                    likes -= 1;
+                    widget.decrementLike();
                   }
 
                 });
@@ -377,8 +422,8 @@ class _FeedState extends State<Feed> {
                       child: CachedNetworkImage(
                         imageUrl: widget.feed.postUrl,
                         placeholder: (context, url) =>
-                            CircularProgressIndicator(),
-                        errorWidget: (context, url, error) => Icon(Icons.error),
+                            const CircularProgressIndicator(),
+                        errorWidget: (context, url, error) => const Icon(Icons.error),
                         fit: BoxFit.fill,
                       ),
                     ),
@@ -410,14 +455,28 @@ class _FeedState extends State<Feed> {
                     color: _isLiked.value ? Colors.red : Colors.black,
                   ),
                   // PrimaryText(text: '${widget.likes}',),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 18.0,
-                    ),
-                    child: SvgPicture.asset(
-                      'Assets/comment_icon.svg',
-                      width: 24,
-                      height: 24,
+                  GestureDetector(
+                    onTap: (){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          fullscreenDialog: true,
+                          builder: (context) =>
+                              CommentsScreen(feedData: widget.feed,
+                                profileUrl: currentUserProfileUrl,
+                                name:currentUserName,),
+                        ),
+                      );
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        left: 18.0,
+                      ),
+                      child: SvgPicture.asset(
+                        'Assets/comment_icon.svg',
+                        width: 24,
+                        height: 24,
+                      ),
                     ),
                   ),
                   Padding(

@@ -13,6 +13,8 @@ class FeedDataModel{
    int comments;
    String caption;
    int timeStamp;
+   String postId;
+   String userId;
 
 
    FeedDataModel({
@@ -24,6 +26,8 @@ class FeedDataModel{
    required this.comments,
       required this.caption,
       required this.timeStamp,
+      required this.postId,
+      required this.userId,
 
    });
 }

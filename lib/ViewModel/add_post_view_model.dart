@@ -40,8 +40,6 @@ class AddPostViewModel extends ChangeNotifier {
       await docRef.set({
         'imageUrl': imageUrl,
         'caption': caption,
-        'comments': [], // Initialize as an empty list
-        'liked-by': <String>[],
         'likes': 0, // Initialize as 0
         'totalShares': 0, // Initialize as 0
         'timestamp': FieldValue.serverTimestamp(),

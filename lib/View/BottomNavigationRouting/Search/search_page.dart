@@ -1,7 +1,6 @@
-
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ehisaab_2/Config/text.dart';
+import 'package:ehisaab_2/View/BottomNavigationRouting/Search/search_page_details.dart';
 import 'package:ehisaab_2/View/BottomNavigationRouting/Search/search_tab.dart';
 import 'package:ehisaab_2/ViewModel/search_view_model.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +11,6 @@ import 'package:provider/provider.dart';
 import '../../../App/injectors.dart';
 import '../../../Config/size_config.dart';
 import '../../../Model/feed_data_model.dart';
-
 
 class SearchPageRoute extends StatefulWidget {
   const SearchPageRoute({
@@ -64,84 +62,99 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-
   final SearchViewModel viewModel = injector<SearchViewModel>();
-
 
   List<FeedDataModel> _feedDataList = [];
 
   Future<void> fetchAndDisplayPosts() async {
-     await viewModel.fetchFeedData();
-
+    await viewModel.fetchFeedData();
   }
 
   @override
   void initState() {
-
     super.initState();
-    fetchAndDisplayPosts().then((value){
+    fetchAndDisplayPosts().then((value) {
       print(viewModel.feedDataList);
     });
   }
-  
-  
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<SearchViewModel>(
         create: (context) => viewModel,
         child: Consumer<SearchViewModel>(
-        builder: (context, model, child) => Scaffold(
-      body: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            GestureDetector(
-              onTap: () {
+            builder: (context, model, child) => Scaffold(
+                  body: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const SearchTab()));
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                                top: 25, right: 30, left: 30, bottom: 10),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  color:
+                                      const Color.fromARGB(67, 158, 158, 158)),
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    bottom: 10.0, top: 10, left: 10),
+                                child: Row(children: const [
+                                  Icon(Icons.search),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  PrimaryText(text: 'search'),
+                                ]),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width,
+                            child: StaggeredGridView.countBuilder(
+                              padding: const EdgeInsets.all(4),
+                              crossAxisCount: 6,
+                              itemCount: model.feedDataList.length,
+                              itemBuilder: (BuildContext context, int index) =>
+                                  Hero(
+                                  tag:model.feedDataList[index].postUrl ,
+                                  child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        fullscreenDialog: true,
+                                        builder: (context) =>
+                                            SearchPageExplore(url: model.feedDataList[index].postUrl,
 
-
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => const SearchTab()));
-              },
-              child: Padding(
-                padding: const EdgeInsets.only(
-                    top: 25, right: 30, left: 30, bottom: 10),
-                child: Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      color: const Color.fromARGB(67, 158, 158, 158)),
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.only(bottom: 10.0, top: 10, left: 10),
-                    child: Row(children: const [
-                      Icon(Icons.search),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      PrimaryText(text: 'search'),
-                    ]),
-                  ),
-                ),
-              ),
-            ),
-            Expanded(
-                child:StaggeredGridView.countBuilder(
-                    padding: const EdgeInsets.all(4),
-                    crossAxisCount: 4,
-                    itemCount: model.feedDataList.length,
-                    itemBuilder: (BuildContext context, int index) => Tile(
-                      index: index,
-                      data: model.feedDataList[index],
-                ),
-                  staggeredTileBuilder: (int index) =>
-                      StaggeredTile.count(2,index.isEven?3:2),
-                  mainAxisSpacing:4,
-                  crossAxisSpacing: 4,
-                ),
-
-
-            ),
-          ]),
-    )));
+                                              feed: model.feedDataList[index],),
+                                      ),
+                                    );
+                                  },
+                                  child: Tile(
+                                    index: index,
+                                    data: model.feedDataList[index],
+                                  ),
+                                ),
+                              ),
+                              staggeredTileBuilder: (int index) =>
+                                  StaggeredTile.count(2, index.isEven ? 3 : 2),
+                              mainAxisSpacing: 1,
+                              crossAxisSpacing: 1,
+                            ),
+                          ),
+                        ),
+                      ]),
+                )));
   }
 }
 
@@ -149,7 +162,8 @@ class Tile extends StatelessWidget {
   final int index;
   final FeedDataModel data;
 
-  const Tile({Key? key, required this.index, required this.data}) : super(key: key);
+  const Tile({Key? key, required this.index, required this.data})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -164,8 +178,7 @@ class Tile extends StatelessWidget {
           Center(
             child: CachedNetworkImage(
               imageUrl: data.postUrl,
-              placeholder: (context, url) =>
-                  CircularProgressIndicator(),
+              placeholder: (context, url) => const CircularProgressIndicator(),
               errorWidget: (context, url, error) => Icon(Icons.error),
               fit: BoxFit.fill,
             ),
@@ -175,7 +188,6 @@ class Tile extends StatelessWidget {
     );
   }
 }
-
 
 // GridView.custom(
 // gridDelegate: SliverQuiltedGridDelegate(

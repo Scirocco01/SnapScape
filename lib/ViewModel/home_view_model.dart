@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../Model/comments_model.dart';
 import '../Model/feed_data_model.dart';
 import '../Model/user_data_model.dart';
 
@@ -68,7 +69,7 @@ class HomeViewModel extends ChangeNotifier {
     _userNameForHomePage();
     profilePhotoUrl = await _getPhotoFromStorage();
     // await saveImageToSharedPref(profilePhotoUrl,user!.uid);
-    saveImageToSharedPref(profilePhotoUrl, user!.uid);
+    // saveImageToSharedPref(profilePhotoUrl, user!.uid);
     notifyListeners();
     print('getProfileFunc successfully executed photo uri is $profilePhotoUrl');
   }
@@ -261,6 +262,7 @@ class HomeViewModel extends ChangeNotifier {
       String name = userDoc.get('name');
       String userName = userDoc.get('userName');
       String photoUrl = userDoc.get('photoUrl');
+
       list = [name,userName,photoUrl];
 
 
@@ -288,6 +290,8 @@ class HomeViewModel extends ChangeNotifier {
 
         
         if(userInfo.isEmpty) {
+
+
           FeedDataModel feedData = FeedDataModel(
             name: 'Sanan',
             nickName: 'sana_sk',
@@ -297,6 +301,7 @@ class HomeViewModel extends ChangeNotifier {
             comments: doc['comments'].length,
             caption: doc['caption'],
             timeStamp: (doc['timestamp'] as Timestamp).millisecondsSinceEpoch,
+            postId: doc.id, userId: '',
           );
           feedDataList.add(feedData);
         }
@@ -310,6 +315,8 @@ class HomeViewModel extends ChangeNotifier {
             comments: doc['comments'].length,
             caption: doc['caption'],
             timeStamp: (doc['timestamp'] as Timestamp).millisecondsSinceEpoch,
+            postId: doc.id,
+            userId: userId,
           );
           feedDataList.add(feedData);
         }
@@ -320,6 +327,60 @@ class HomeViewModel extends ChangeNotifier {
 
     return feedDataList;
   }
+
+
+  /// to like a post
+
+
+
+  Future<void> incrementLikePost(String postId, String userId) async {
+    final DocumentReference postRef = FirebaseFirestore.instance.collection('posts').doc(postId);
+
+    // Increment the likes count by 1
+    await postRef.update({'likes': FieldValue.increment(1)});
+
+    // Add the user ID to the liked-by array
+    await postRef.collection('liked-by').doc(userId).set(({
+      'timeStamp': FieldValue.serverTimestamp(),
+      'userId':userId
+    }));
+  }
+
+  Future<void> decrementLikePost(String postId, String userId) async {
+    final DocumentReference postRef = FirebaseFirestore.instance.collection('posts').doc(postId);
+
+    // Increment the likes count by 1
+    await postRef.update({'likes': FieldValue.increment(-1)});
+
+    // Add the user ID to the liked-by array
+    await postRef.collection('liked-by').doc(userId).delete();
+  }
+
+
+  ///check for liked by
+
+  Future<bool> checkForLikedBy(String postId,String userId)async{
+
+    final DocumentReference postRef = FirebaseFirestore.instance.collection('posts').doc(postId);
+    final DocumentSnapshot likeDoc = await postRef.collection('liked-by').doc(userId).get();
+
+    return likeDoc.exists;
+
+  }
+
+  Future<List<String>> getCurrentUserDat() async {
+    List<String> list = [];
+    // Query the Firestore collection for the current user document
+    final DocumentSnapshot userSnapshot =  await FirebaseFirestore.instance.collection('users').doc(user!.uid).get();
+
+    // Get the name and profile URL from the user document
+    final String currentUserName = userSnapshot.get('name');
+    final String currentUserProfileUrl = userSnapshot.get('photoUrl');
+    list = [currentUserName,currentUserProfileUrl];
+    return list;
+
+  }
+
 
 
 

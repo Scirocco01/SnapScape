@@ -1,5 +1,6 @@
 import 'package:ehisaab_2/ViewModel/Notifications_view_model.dart';
 import 'package:ehisaab_2/ViewModel/auth_view_model.dart';
+import 'package:ehisaab_2/ViewModel/comments_view_model.dart';
 import 'package:ehisaab_2/ViewModel/home_view_model.dart';
 import 'package:ehisaab_2/ViewModel/navigation_provider_view_model.dart';
 import 'package:ehisaab_2/ViewModel/search_view_model.dart';
@@ -31,5 +32,7 @@ Future<void> initDependencies() async {
   injector.registerFactory<AddPostViewModel>(() =>AddPostViewModel());
 
   injector.registerFactory<SearchViewModel>(() => SearchViewModel());
+
+  injector.registerFactory<CommentsViewModel>(() => CommentsViewModel());
   // injector.registerSingleton<HomeViewModel>(HomeViewModel());
 }
