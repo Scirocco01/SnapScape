@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ehisaab_2/App/injectors.dart';
 import 'package:ehisaab_2/Config/size_config.dart';
 import 'package:ehisaab_2/Model/feed_data_model.dart';
@@ -18,10 +17,12 @@ import 'messaging_page.dart';
 class HomePageRoute extends StatefulWidget {
   const HomePageRoute({
     Key? key,
-    required this.setupPageRoute,
+    required this.setupPageRoute, required this.profileUrl, required this.userName,
   }) : super(key: key);
 
   final String setupPageRoute;
+  final String profileUrl;
+  final String userName;
 
   @override
   State<HomePageRoute> createState() => _HomePageRouteState();
@@ -44,7 +45,7 @@ class _HomePageRouteState extends State<HomePageRoute> {
     late Widget page;
     switch (settings.name) {
       case "dashboard/home":
-        page = const HomePage();
+        page =  HomePage(profileUrl: widget.profileUrl, userName: widget.userName,);
         break;
     }
 
@@ -58,7 +59,9 @@ class _HomePageRouteState extends State<HomePageRoute> {
 }
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({Key? key, required this.profileUrl, required this.userName}) : super(key: key);
+  final String profileUrl;
+  final String userName;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -99,6 +102,7 @@ class _HomePageState extends State<HomePage> {
             viewModel.decrementLikePost(_feedDataList[i].postId, _feedDataList[i].userId);
           })
       );
+      print('this is should be the feed widget added to the List ${_feedDataList[i].name}');
     }
   }
 
@@ -106,25 +110,26 @@ class _HomePageState extends State<HomePage> {
 
   @override
   initState() {
+    print('in home page this is the userName ${widget.userName}, and this is the userProfile pic ${widget.profileUrl}');
     setState(() {
       _isLoading = true;
     });
     super.initState();
-    getProfilePhotoAndName();
+
     getAllDoc();
     fetchAndDisplayPosts().then((value) {
       setState(() {
-        _isLoading = false;
         _addDataToFeeDList();
+        _isLoading = false;
 
         print('feed widget added');
       });
     });
   }
 
-  Future<void> getProfilePhotoAndName() async {
-    await viewModel.getProfilePhotoUrl();
-  }
+  // Future<void> getProfilePhotoAndName() async {
+  //   await viewModel.getProfilePhotoUrl();
+  // }
 
   getAllDoc() async {
     await viewModel.getAllDocumentIds(viewModel.user!.uid);
@@ -199,11 +204,11 @@ class _HomePageState extends State<HomePage> {
                                                   children: [
                                                     CircleAvatar(
                                                         radius: 35,
-                                                        backgroundImage: model
-                                                                    .profilePhotoUrl !=
+                                                        backgroundImage: widget
+                                                                    .profileUrl !=
                                                                 ""
-                                                            ? NetworkImage(model
-                                                                .profilePhotoUrl)
+                                                            ? NetworkImage(widget
+                                                                .profileUrl)
                                                             : const NetworkImage(
                                                                 'https://i.scdn.co/image/ab6761610000e5ebce202eea14763b8b7696936e')),
                                                     Positioned(
@@ -299,6 +304,7 @@ class _HomePageState extends State<HomePage> {
                     MessagingPage(
                       pageController: _pageController,
                       model: model,
+                      profileUrl: widget.profileUrl, userName: widget.userName,
                     )
                   ],
                 )));
@@ -503,7 +509,7 @@ class _FeedState extends State<Feed> {
             Padding(
               padding: const EdgeInsets.only(left: 12.0, right: 8.0, top: 4),
               child: PrimaryText(
-                text: '${likes} likes',
+                text: '$likes likes',
                 size: 14,
                 fontWeight: FontWeight.w500,
               ),

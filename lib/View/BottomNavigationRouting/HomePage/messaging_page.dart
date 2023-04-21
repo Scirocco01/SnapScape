@@ -12,11 +12,14 @@ class MessagingPage extends StatefulWidget {
   const MessagingPage({
     Key? key,
     required this.pageController,
-    required this.model,
+    required this.model, required this.profileUrl, required this.userName,
   }) : super(key: key);
 
   final PageController pageController;
   final HomeViewModel model;
+  final String profileUrl;
+  final String userName;
+
 
   @override
   State<MessagingPage> createState() => _MessagingPageState();
@@ -58,7 +61,7 @@ class _MessagingPageState extends State<MessagingPage> {
                   color: Colors.black,
                 )),
              PrimaryText(
-              text: widget.model.userName,
+              text: widget.userName,
             ),
 
             const Expanded(child: SizedBox()),
@@ -66,7 +69,7 @@ class _MessagingPageState extends State<MessagingPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ComposeNewMessageScreen(model:widget.model),
+                  builder: (context) => ComposeNewMessageScreen(model:widget.model, currentUser: widget.userName,),
                 ),
               );
             }, icon: const Icon(Icons.add,color: Colors.black,))

@@ -2,7 +2,6 @@ import 'package:ehisaab_2/View/BottomNavigationRouting/AddPost/add_post.dart';
 import 'package:ehisaab_2/View/BottomNavigationRouting/HomePage/home_page.dart';
 import 'package:ehisaab_2/View/BottomNavigationRouting/Notifications/notifications.dart';
 import 'package:ehisaab_2/View/BottomNavigationRouting/Profile/profile_page.dart';
-import 'package:ehisaab_2/View/login_screen.dart';
 import 'package:ehisaab_2/ViewModel/navigation_provider_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -23,27 +22,28 @@ class BottomNavigation extends StatefulWidget {
 class _BottomNavigationState extends State<BottomNavigation> {
   final NavigationProvider viewModel = injector<NavigationProvider>();
 
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  static const List<Widget> _widgetOptions = <Widget>[
-    Text(
-      'Index 2: School',
-      style: optionStyle,
-    ),
-    SearchPage(),
-    Text(
-      'Index 2: School',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 3: Settings',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 4: Settings',
-      style: optionStyle,
-    ),
-  ];
+  String profileUrl = '';
+  String userName = '';
+
+  Future<void> _getUserInfo()async{
+    String user = '';
+    String url = '';
+    url = await viewModel.getProfilePhotoUrl();
+    user = await viewModel.getUserName();
+    setState(() {
+      profileUrl = url;
+      userName = user;
+    });
+    print('this is the userName$userName this is the profile url$profileUrl');
+  }
+
+  late Future<void> userInfoFuture;
+
+  @override
+  void initState() {
+    userInfoFuture = _getUserInfo();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,15 +56,28 @@ class _BottomNavigationState extends State<BottomNavigation> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     if (model.currentTab == 'home')
-                      const HomePageRoute(setupPageRoute: "dashboard/home"),
+                      FutureBuilder(
+                        future: userInfoFuture,
+                        builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+                          if (snapshot.connectionState == ConnectionState.done) {
+                            return HomePageRoute(
+                              setupPageRoute: "dashboard/home",
+                              profileUrl: profileUrl,
+                              userName: userName,
+                            );
+                          } else {
+                            return CircularProgressIndicator();
+                          }
+                        },
+                      ),
                     if (model.currentTab == 'search')
                       const SearchPageRoute(setupPageRoute: "dashboard/search"),
                     if(model.currentTab == 'notifications')
                       const NotificationsRoute(setupPageRoute: 'dashboard/notifications'),
-                    if(model.currentTab == 'profile')
-                      const ProfileRoute(setupPageRoute: 'dashboard/profile'),
                     if(model.currentTab == 'addPost')
                       const AddPostRoute(setupPageRoute: 'dashboard/addPost'),
+                    if(model.currentTab == 'profile')
+                       ProfileRoute(setupPageRoute: 'dashboard/profile', userName: userName, profileUrl: profileUrl,),
                     Container(
                       decoration: const BoxDecoration(
                           color: Colors.white,
@@ -120,9 +133,12 @@ class _BottomNavigationState extends State<BottomNavigation> {
                                     borderRadius: const BorderRadius.all(Radius.circular(32)),
                                     border: Border.all(color: model.currentTab == 'profile'?Colors.black:Colors.white,width: 2)
                                   ),
-                                  child: const CircleAvatar(
+                                  child:  CircleAvatar(
                                     radius: 16,
-                                    backgroundImage: NetworkImage('https://e1.pxfuel.com/desktop-wallpaper/270/669/desktop-wallpaper-blue-fade-gradient-by-hk3ton-color-fade-thumbnail.jpg'),
+                                    backgroundImage: profileUrl == null?
+                                    NetworkImage('https://e1.pxfuel.com/desktop-wallpaper/270/669/desktop-wallpaper-blue-fade-gradient-by-hk3ton-color-fade-thumbnail.jpg')
+                                        :
+                                        NetworkImage(profileUrl),
                                   ),
                                 ),
                               ),

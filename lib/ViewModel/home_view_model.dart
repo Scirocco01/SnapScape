@@ -17,24 +17,23 @@ class HomeViewModel extends ChangeNotifier {
 
 
 
-  String profilePhotoUrl = '';
-  String userName = '';
+
 
   //get userName for Home Page
-  _userNameForHomePage() async {
-    try {
-      DocumentSnapshot userDoc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user!.uid)
-          .get();
-      userName = userDoc.get('userName');
-      notifyListeners();
-    } catch (e) {
-      print('error getting user Name $e');
-      userName = 'error 41';
-      notifyListeners();
-    }
-  }
+  // _userNameForHomePage() async {
+  //   try {
+  //     DocumentSnapshot userDoc = await FirebaseFirestore.instance
+  //         .collection('users')
+  //         .doc(user!.uid)
+  //         .get();
+  //     userName = userDoc.get('userName');
+  //     notifyListeners();
+  //   } catch (e) {
+  //     print('error getting user Name $e');
+  //     userName = 'error 41';
+  //     notifyListeners();
+  //   }
+  // }
 
   /// for User Data like name and profile Photo
 
@@ -53,26 +52,26 @@ class HomeViewModel extends ChangeNotifier {
     }
   }
 
-  Future<String> _getPhotoFromStorage() async {
-    try {
-      Reference photoRef = FirebaseStorage.instance
-          .refFromURL(await _getProfilePhotoFromFireStore(user!.uid));
-      String downloadUrl = await photoRef.getDownloadURL();
-      return downloadUrl;
-    } catch (e) {
-      print('error in firebase storage $e');
-      return '';
-    }
-  }
+  // Future<String> _getPhotoFromStorage() async {
+  //   try {
+  //     Reference photoRef = FirebaseStorage.instance
+  //         .refFromURL(await _getProfilePhotoFromFireStore(user!.uid));
+  //     String downloadUrl = await photoRef.getDownloadURL();
+  //     return downloadUrl;
+  //   } catch (e) {
+  //     print('error in firebase storage $e');
+  //     return '';
+  //   }
+  // }
 
-  getProfilePhotoUrl() async {
-    _userNameForHomePage();
-    profilePhotoUrl = await _getPhotoFromStorage();
-    // await saveImageToSharedPref(profilePhotoUrl,user!.uid);
-    // saveImageToSharedPref(profilePhotoUrl, user!.uid);
-    notifyListeners();
-    print('getProfileFunc successfully executed photo uri is $profilePhotoUrl');
-  }
+  // getProfilePhotoUrl() async {
+  //   _userNameForHomePage();
+  //   profilePhotoUrl = await _getPhotoFromStorage();
+  //   // await saveImageToSharedPref(profilePhotoUrl,user!.uid);
+  //   // saveImageToSharedPref(profilePhotoUrl, user!.uid);
+  //   notifyListeners();
+  //   print('getProfileFunc successfully executed photo uri is $profilePhotoUrl');
+  // }
 
   /// to get save image in memory using shared prefs and cache_manage
 
@@ -113,7 +112,7 @@ class HomeViewModel extends ChangeNotifier {
   List<UserMessageModel> userListForMessage = [];
 
   // Search user by their user name and saves to (userIdListForMessageSearch) List
-  searchUserName(String userName) async {
+  searchUserName(String userName,String currentUser) async {
     emptyUserListForMessage();
     String matchMakingUsers = '';
     QuerySnapshot querySnapshot;
@@ -136,12 +135,12 @@ class HomeViewModel extends ChangeNotifier {
 
     matchMakingUsers;
     print('this is the matchmaking list $matchMakingUsers');
-    await _getUserById(matchMakingUsers);
+    await _getUserById(matchMakingUsers,currentUser);
     notifyListeners();
   }
 
   // function which searches and gives user according to UserID
-  _getUserById(String userIDList) async {
+  _getUserById(String userIDList,String userName) async {
     DocumentSnapshot userDoc = await FirebaseFirestore.instance
         .collection('users')
         .doc(userIDList)
@@ -312,7 +311,7 @@ class HomeViewModel extends ChangeNotifier {
             profileUrl: userInfo[2],
             postUrl: doc['imageUrl'],
             likes: doc['likes'],
-            comments: doc['comments'].length,
+            comments: 1,
             caption: doc['caption'],
             timeStamp: (doc['timestamp'] as Timestamp).millisecondsSinceEpoch,
             postId: doc.id,

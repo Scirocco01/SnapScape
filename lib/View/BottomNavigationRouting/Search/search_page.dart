@@ -128,7 +128,8 @@ class _SearchPageState extends State<SearchPage> {
                                   Hero(
                                   tag:model.feedDataList[index].postUrl ,
                                   child: GestureDetector(
-                                  onTap: () {
+                                  onTap: () async {
+                                    final List<int> list = await model.getPostCount(model.feedDataList[index].userId);
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -136,7 +137,7 @@ class _SearchPageState extends State<SearchPage> {
                                         builder: (context) =>
                                             SearchPageExplore(url: model.feedDataList[index].postUrl,
 
-                                              feed: model.feedDataList[index],),
+                                              feed: model.feedDataList[index], model: model, list: list,),
                                       ),
                                     );
                                   },

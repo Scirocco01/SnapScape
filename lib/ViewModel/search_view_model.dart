@@ -73,7 +73,7 @@ class SearchViewModel extends ChangeNotifier{
             profileUrl: userInfo[2],
             postUrl: doc['imageUrl'],
             likes: doc['likes'],
-            comments: doc['comments'].length,
+            comments: doc['comments'],
             caption: doc['caption'],
             timeStamp: (doc['timestamp'] as Timestamp).millisecondsSinceEpoch,
             postId: doc.id,
@@ -88,6 +88,27 @@ class SearchViewModel extends ChangeNotifier{
     }
 
 
+  }
+
+
+  /// get postCount followers, following int
+
+  Future<List<int>> getPostCount(String userId) async {
+     List<int> list = [];
+     DocumentSnapshot userDoc = await FirebaseFirestore.instance
+         .collection('users')
+         .doc(userId)
+         .get();
+
+    if (userDoc.exists) {
+      list.add(userDoc.get('postCount'));
+      list.add(userDoc.get('followers'));
+      list.add(userDoc.get('following'));
+      return list;
+
+    } else {
+      throw Exception('User not found');
+    }
   }
 
 

@@ -9,10 +9,11 @@ import '../../../Config/text.dart';
 import 'message_thread.dart';
 
 class ComposeNewMessageScreen extends StatefulWidget {
-  const ComposeNewMessageScreen({Key? key, required this.model})
+  const ComposeNewMessageScreen({Key? key, required this.model, required this.currentUser})
       : super(key: key);
 
   final HomeViewModel model;
+  final String currentUser;
 
   @override
   State<ComposeNewMessageScreen> createState() =>
@@ -87,7 +88,7 @@ class _ComposeNewMessageScreenState extends State<ComposeNewMessageScreen> {
                               vertical: 5.0, horizontal: 10.0),
                         ),
                         onChanged: (value) async {
-                            await model.searchUserName(value);
+                            await model.searchUserName(value,widget.currentUser);
                             if(value == ''){
                               model.emptyUserListForMessage();
                             }

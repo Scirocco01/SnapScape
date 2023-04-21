@@ -4,16 +4,21 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ehisaab_2/Config/text.dart';
 import 'package:ehisaab_2/Model/feed_data_model.dart';
+import 'package:ehisaab_2/Model/user_profile_model.dart';
+import 'package:ehisaab_2/View/BottomNavigationRouting/Profile/persons_profile_page.dart';
+import 'package:ehisaab_2/ViewModel/search_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../../../Config/size_config.dart';
 
 class SearchPageExplore extends StatefulWidget {
-  const SearchPageExplore({Key? key, required this.url, required this.feed}) : super(key: key);
+  const SearchPageExplore({Key? key, required this.url, required this.feed, required this.model, required this.list}) : super(key: key);
 
   final String url;
   final FeedDataModel feed;
+  final SearchViewModel model;
+  final List<int> list;
 
 
   @override
@@ -34,6 +39,31 @@ class _SearchPageExploreState extends State<SearchPageExplore> {
         _showHeart = false;
       });
     });
+  }
+
+  late UserProfileModel userProfileModel;
+  List<int> postCount = [];
+  _getPostCount()async{
+    final List<int> _postCount = await widget.model.getPostCount(widget.feed.userId);
+    setState(() {
+      postCount = _postCount;
+
+    });
+    print('this is the List postcount $postCount');
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _getPostCount();
+    userProfileModel = UserProfileModel(
+        userId: widget.feed.userId,
+        userName: widget.feed.nickName,
+        profileUrl: widget.feed.profileUrl,
+        postsCount: widget.list[0],
+        followersCount: widget.list[0],
+        followingCount: widget.list[0]);
   }
 
 
@@ -65,10 +95,22 @@ class _SearchPageExploreState extends State<SearchPageExplore> {
                 padding: const EdgeInsets.only(left: 8.0, right: 8.0),
                 child: Row(
                   children: [
-                    CircleAvatar(
-                      backgroundColor: Colors.blue,
-                      radius: 15,
-                      backgroundImage: NetworkImage(widget.feed.profileUrl),
+                    GestureDetector(
+                      onTap:(){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            fullscreenDialog: true,
+                            builder: (context) =>
+                                PersonsProfilePage(userProfileModel: userProfileModel),
+                          ),
+                        );
+                      },
+                      child: CircleAvatar(
+                        backgroundColor: Colors.blue,
+                        radius: 15,
+                        backgroundImage: NetworkImage(widget.feed.profileUrl),
+                      ),
                     ),
                     SizedBox(
                       width: SizeConfig.screenWidth! * 0.02,
