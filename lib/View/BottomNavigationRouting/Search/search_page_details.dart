@@ -26,6 +26,7 @@ class SearchPageExplore extends StatefulWidget {
 }
 
 class _SearchPageExploreState extends State<SearchPageExplore> {
+
   final ValueNotifier<bool> _isLiked = ValueNotifier<bool>(false);
   bool _showHeart = false;
   int likes = 0;
@@ -62,8 +63,8 @@ class _SearchPageExploreState extends State<SearchPageExplore> {
         userName: widget.feed.nickName,
         profileUrl: widget.feed.profileUrl,
         postsCount: widget.list[0],
-        followersCount: widget.list[0],
-        followingCount: widget.list[0]);
+        followersCount: widget.list[1],
+        followingCount: widget.list[2]);
   }
 
 
@@ -102,7 +103,7 @@ class _SearchPageExploreState extends State<SearchPageExplore> {
                           MaterialPageRoute(
                             fullscreenDialog: true,
                             builder: (context) =>
-                                PersonsProfilePage(userProfileModel: userProfileModel),
+                                PersonsProfilePage(userProfileModel: userProfileModel, userPostsUrl: [],),
                           ),
                         );
                       },

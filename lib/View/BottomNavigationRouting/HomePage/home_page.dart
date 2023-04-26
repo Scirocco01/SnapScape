@@ -383,7 +383,8 @@ class _FeedState extends State<Feed> {
                   CircleAvatar(
                     backgroundColor: Colors.blue,
                     radius: 15,
-                    backgroundImage: NetworkImage(widget.feed.profileUrl),
+                    backgroundImage: widget.feed.profileUrl != ''?NetworkImage(widget.feed.profileUrl)
+                        :const NetworkImage('https://www.shutterstock.com/image-illustration/black-smooth-gradient-background-image-260nw-1936704184.jpg')
                   ),
                   SizedBox(
                     width: SizeConfig.screenWidth! * 0.02,

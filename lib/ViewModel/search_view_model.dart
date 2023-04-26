@@ -99,16 +99,20 @@ class SearchViewModel extends ChangeNotifier{
          .collection('users')
          .doc(userId)
          .get();
+     print('this is the userID  = ${userId}');
+     try{
+       list.add(userDoc.get('postCount'));
+       list.add(userDoc.get('followers'));
+       list.add(userDoc.get('following'));
+       print('this is the post count List $list');
+       return list;
+     }catch(e){
+       print('this is the exception in post count $e');
+       list = [];
+       return list;
+     }
 
-    if (userDoc.exists) {
-      list.add(userDoc.get('postCount'));
-      list.add(userDoc.get('followers'));
-      list.add(userDoc.get('following'));
-      return list;
 
-    } else {
-      throw Exception('User not found');
-    }
   }
 
 

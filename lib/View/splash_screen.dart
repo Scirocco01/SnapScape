@@ -1,6 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ehisaab_2/View/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
 import '../Config/size_config.dart';
 import 'bottom_navigation.dart';
@@ -28,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 6), () {
       checkLoginStatus();
     });
   }
@@ -50,26 +52,17 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Container(
-      height: SizeConfig.screenHeight! * 1,
-      width: SizeConfig.screenWidth! * 1,
-      decoration: const BoxDecoration(
-          image: DecorationImage(
-        image: AssetImage('Assets/splash.png'),
-        fit: BoxFit.fill,
-      )),
+      height: SizeConfig.screenHeight! * 0.2,
+      width: SizeConfig.screenWidth! * 0.2,
+      color: Colors.black,
+      child: Image.asset(
+        'Assets/139658-rivals-loading.gif',
+        width: 100,
+        height: 100,
+        fit: BoxFit.contain,
+      )
     );
   }
 }
 
-//
-// Container(
-// height: SizeConfig.screenHeight! * 1,
-// width: SizeConfig.screenWidth! * 1,
-// decoration: const BoxDecoration(
-// image: DecorationImage(
-// image:AssetImage('Assets/splash.png'),
-// fit:BoxFit.fill,
-//
-// )
-// ),
-// );
+

@@ -9,6 +9,7 @@ import 'package:get_it/get_it.dart';
 
 import '../ViewModel/add_post_view_model.dart';
 import '../ViewModel/message_view_model.dart';
+import '../ViewModel/profile_view_model.dart';
 
 final GetIt injector = GetIt.instance;
 
@@ -34,5 +35,7 @@ Future<void> initDependencies() async {
   injector.registerFactory<SearchViewModel>(() => SearchViewModel());
 
   injector.registerFactory<CommentsViewModel>(() => CommentsViewModel());
+
+  injector.registerFactory<ProfileViewModel>(() => ProfileViewModel());
   // injector.registerSingleton<HomeViewModel>(HomeViewModel());
 }

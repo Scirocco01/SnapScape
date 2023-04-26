@@ -1,3 +1,4 @@
+import 'package:ehisaab_2/Model/user_profile_model.dart';
 import 'package:ehisaab_2/View/BottomNavigationRouting/AddPost/add_post.dart';
 import 'package:ehisaab_2/View/BottomNavigationRouting/HomePage/home_page.dart';
 import 'package:ehisaab_2/View/BottomNavigationRouting/Notifications/notifications.dart';
@@ -24,6 +25,11 @@ class _BottomNavigationState extends State<BottomNavigation> {
 
   String profileUrl = '';
   String userName = '';
+  // this should be implemented after follow or unfollow function has been added
+  UserProfileModel userProfileData = UserProfileModel(
+      userId: '', userName:'',
+      profileUrl: '', postsCount: 0,
+      followersCount: 0, followingCount: 0);
 
   Future<void> _getUserInfo()async{
     String user = '';

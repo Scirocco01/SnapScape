@@ -41,10 +41,18 @@ class AddPostViewModel extends ChangeNotifier {
         'imageUrl': imageUrl,
         'caption': caption,
         'likes': 0, // Initialize as 0
+        'comments':0,
         'totalShares': 0, // Initialize as 0
         'timestamp': FieldValue.serverTimestamp(),
         'userID': user!.uid // Set the server timestamp
+
       });
+      CollectionReference usersRef = FirebaseFirestore.instance.collection('users');
+      DocumentReference userDocRef = usersRef.doc(user!.uid);
+      await userDocRef.update({'postCount': FieldValue.increment(1)});
+      CollectionReference userPostsRef = userDocRef.collection('posts');
+      await userPostsRef.add({
+        'postId': documentId});
     } catch (e) {
       print('error occurred $e');
     }
