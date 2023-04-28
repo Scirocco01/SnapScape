@@ -3,9 +3,11 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ehisaab_2/Model/user_data_model_for_message.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Model/comments_model.dart';
@@ -339,9 +341,9 @@ class HomeViewModel extends ChangeNotifier {
     await postRef.update({'likes': FieldValue.increment(1)});
 
     // Add the user ID to the liked-by array
-    await postRef.collection('liked-by').doc(userId).set(({
+    await postRef.collection('liked-by').doc(user!.uid).set(({
       'timeStamp': FieldValue.serverTimestamp(),
-      'userId':userId
+      'userId':user!.uid
     }));
   }
 
@@ -352,7 +354,7 @@ class HomeViewModel extends ChangeNotifier {
     await postRef.update({'likes': FieldValue.increment(-1)});
 
     // Add the user ID to the liked-by array
-    await postRef.collection('liked-by').doc(userId).delete();
+    await postRef.collection('liked-by').doc(user!.uid).delete();
   }
 
 
@@ -379,6 +381,27 @@ class HomeViewModel extends ChangeNotifier {
     return list;
 
   }
+
+
+  ///for dynamic Links
+  // func to create link
+  Future<String> createLink(String refCode) async {
+    final String url = 'https://snapscrap.page.link/referral?reff=$refCode';
+
+    final DynamicLinkParameters parameters = DynamicLinkParameters(
+        link:Uri.parse(url),
+        uriPrefix: 'https://snapscape.page.link',
+      androidParameters: const AndroidParameters(packageName: 'com.example.ehisaab_2',minimumVersion: 21),
+      // socialMetaTagParameters: const SocialMetaTagParameters()
+    );
+
+    final FirebaseDynamicLinks links = FirebaseDynamicLinks.instance;
+    final refLink = await links.buildShortLink(parameters);
+    return refLink.shortUrl.toString();
+
+  }
+
+
 
 
 

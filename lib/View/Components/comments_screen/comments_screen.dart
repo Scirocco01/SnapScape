@@ -52,11 +52,11 @@ class _CommentsScreenState extends State<CommentsScreen> {
             builder: (context, model, child) => Scaffold(
                   appBar: AppBar(
                     elevation: 0.5,
-                    iconTheme: IconThemeData(
+                    iconTheme: const IconThemeData(
                       color: Colors.black
                     ),
                     backgroundColor: Colors.white,
-                    title: PrimaryText(text: 'Comments',color: Colors.black,)
+                    title: const PrimaryText(text: 'Comments',color: Colors.black,)
 
                   ),
                   body: Column(
@@ -69,7 +69,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
                               leading: CircleAvatar(
                                 backgroundColor: Colors.grey,
                                 foregroundImage: NetworkImage(
-                                  widget.profileUrl,
+                                  _comments[index].avatarUrl
                                 ),
                               ),
                               title:  Text(_comments[index].username),

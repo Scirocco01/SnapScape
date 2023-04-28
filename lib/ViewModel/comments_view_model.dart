@@ -17,7 +17,7 @@ class CommentsViewModel extends ChangeNotifier{
     final CollectionReference commentsRef = postRef.collection('comments');
 
     await commentsRef.add({
-      'userId': comment.userId,
+      'userId': currentUserId,
       'username': comment.username,
       'avatarUrl': comment.avatarUrl,
       'text': comment.text,

@@ -159,7 +159,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                                 ],
                                               ),
                                             ),
-                                            SizedBox(
+                                            const SizedBox(
                                               height: 20,
                                             ),
                                             Row(
@@ -170,10 +170,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                                   height: 34,
                                                   color: Colors.black,
                                                 ),
-                                                SizedBox(
+                                                const SizedBox(
                                                   width: 20,
                                                 ),
-                                                PrimaryText(
+                                                const PrimaryText(
                                                   text: 'Setting',
                                                 ),
                                               ],

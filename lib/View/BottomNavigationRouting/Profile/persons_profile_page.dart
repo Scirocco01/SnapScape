@@ -178,7 +178,7 @@ class _PersonsProfilePageState extends State<PersonsProfilePage> {
                                       ),
                                     ],
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 25,
                                   ),
                                   Column(
@@ -196,7 +196,7 @@ class _PersonsProfilePageState extends State<PersonsProfilePage> {
                                       ),
                                     ],
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 25,
                                   ),
                                   Column(
@@ -226,6 +226,11 @@ class _PersonsProfilePageState extends State<PersonsProfilePage> {
                                   onPressed: () {
                                     if(!_following) {
                                       model.updateFollowers(widget.userProfileModel.userId);
+                                    }
+                                    if(_following){
+                                      model.removeFollowers(widget.userProfileModel.userId);
+                                      print('follower should be removed ');
+
                                     }
                                     setState(() {
                                       _following = !_following;

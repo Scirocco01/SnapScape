@@ -72,6 +72,13 @@ dependencies:
   cached_network_image: ^3.1.0
   lottie: ^2.3.2
 
+  flutter_native_splash: ^2.2.18
+  firebase_dynamic_links: ^5.1.1
+  share_plus: ^4.5.3
+
+flutter_native_splash:
+  color: "#ededeb"
+  image: Assets/native_splash.jpeg
 
 
 

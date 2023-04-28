@@ -30,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 6), () {
+    Future.delayed(const Duration(seconds: 1), () {
       checkLoginStatus();
     });
   }
@@ -52,15 +52,6 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Container(
-      height: SizeConfig.screenHeight! * 0.2,
-      width: SizeConfig.screenWidth! * 0.2,
-      color: Colors.black,
-      child: Image.asset(
-        'Assets/139658-rivals-loading.gif',
-        width: 100,
-        height: 100,
-        fit: BoxFit.contain,
-      )
     );
   }
 }

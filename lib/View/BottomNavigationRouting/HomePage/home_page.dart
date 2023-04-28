@@ -11,6 +11,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ehisaab_2/Config/text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 import 'messaging_page.dart';
 
@@ -155,7 +156,7 @@ class _HomePageState extends State<HomePage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                'Instagram',
+                                'SnapScape',
                                 style: GoogleFonts.pacifico(
                                   fontSize: 26,
                                   fontWeight: FontWeight.w500,
@@ -486,12 +487,21 @@ class _FeedState extends State<Feed> {
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 18.0, right: 8.0),
-                    child: SvgPicture.asset(
-                      'Assets/instagram-share-icon.svg',
-                      width: 20,
-                      height: 20,
+                  GestureDetector(
+                    onTap: ()  {
+                      widget.model.createLink('29f').then((value){
+                        Share.share(value);
+                        print('this is the share value$value');
+                      });
+
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 18.0, right: 8.0),
+                      child: SvgPicture.asset(
+                        'Assets/instagram-share-icon.svg',
+                        width: 20,
+                        height: 20,
+                      ),
                     ),
                   ),
                   // PrimaryText(text: '${widget.comments}'),
