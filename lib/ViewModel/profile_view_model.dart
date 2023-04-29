@@ -62,15 +62,22 @@ class ProfileViewModel extends ChangeNotifier{
       await userDocRef.update({'following': FieldValue.increment(1)});
       print('Followers count updated successfully');
 
+      //add the the followed users Id to following collection in currentUserDoc
+      CollectionReference currentUserPostsRef = userDocRef.collection('FF');
+      await currentUserPostsRef.doc('following').set({
+        'followerIDs': FieldValue.arrayUnion([followedUserID])
+      },SetOptions(merge: true));
+
       final userDocRef2 = usersCollection.doc(followedUserID);
       await userDocRef2.update({'followers': FieldValue.increment(1)});
 
 
-      DocumentReference userDocRef3 = usersCollection.doc(followedUserID);
-      CollectionReference userPostsRef = userDocRef3.collection('followers');
+      CollectionReference userPostsRef = userDocRef2.collection('FF');
 
-      await userPostsRef.add({
-      'followerIDs': user!.uid});
+      await userPostsRef.doc('followers').set({
+      'followerIDs': FieldValue.arrayUnion([user!.uid])
+      },SetOptions(merge: true));
+
       print('Follower added successfully');
 
 
@@ -110,15 +117,21 @@ class ProfileViewModel extends ChangeNotifier{
     }
   }
 
-  Future<bool> getFollowerIDs(String userID) async {
+  Future<bool> checkIfUserFollows(String userID) async {
     final usersCollection = FirebaseFirestore.instance.collection('users');
-    final followersCollectionRef = usersCollection.doc(userID).collection('followers');
+    final followersDocRef = usersCollection.doc(userID).collection('FF').doc('followers');
 
-    final snapshot = await followersCollectionRef.get();
+    final snapshot = await followersDocRef.get();
 
-    final followerIDs = snapshot.docs.map((doc) => doc['followerIDs'] as List<String>).expand((ids) => ids).toList();
-    print('this is the list for followers Id $followerIDs');
-    return followerIDs.contains(user!.uid);
+    if(snapshot.exists){
+      final followerIDs = snapshot.data()?['followerIDs'] as List<dynamic>? ?? [];
+      print('this is the list for followers Id $followerIDs');
+      return followerIDs.contains(user!.uid);
+    }
+    else{
+      print('No followers found for user $userID');
+      return false;
+    }
   }
 
 
@@ -138,6 +151,24 @@ class ProfileViewModel extends ChangeNotifier{
     } catch (e) {
       print('Error signing out: $e');
       return false;
+    }
+  }
+
+
+  Future<List> getUserFollowerIDs(String userID,String ff)async{
+    final usersCollection = FirebaseFirestore.instance.collection('users');
+    final followersDocRef = usersCollection.doc(userID).collection('FF').doc(ff);
+
+    final snapshot = await followersDocRef.get();
+
+    if(snapshot.exists){
+      final followerIDs = snapshot.data()?['followerIDs'] as List<dynamic>? ?? [];
+      print('this is the list for followers Id $followerIDs');
+      return followerIDs;
+    }
+    else{
+      print('No followers found for user $userID');
+      return [];
     }
   }
 

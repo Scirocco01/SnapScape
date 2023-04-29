@@ -22,6 +22,8 @@ class _PersonsProfilePageState extends State<PersonsProfilePage> {
 
   double _textSize = 17;
   double numberSize = 20;
+  List<String> followersList=[];
+  List<String> followingList = [];
 
   bool _following = false;
 
@@ -36,9 +38,19 @@ class _PersonsProfilePageState extends State<PersonsProfilePage> {
 
   Future<void> _checkIfFollows()async {
     bool contains = false;
-    contains = await viewModel.getFollowerIDs(widget.userProfileModel.userId);
+    contains = await viewModel.checkIfUserFollows(widget.userProfileModel.userId);
+    print('this is the follower Ids$contains');
     setState(() {
       _following = contains;
+    });
+  }
+  
+  Future<void> _getFollowers()async{
+    var followers = [];
+    followers = await viewModel.getUserFollowerIDs(widget.userProfileModel.userId,'followers');
+    setState(() {
+      followersList.add(followers[0]);
+      print('followers List = $followersList');
     });
   }
 
@@ -48,6 +60,7 @@ class _PersonsProfilePageState extends State<PersonsProfilePage> {
     super.initState();
     _getPostsList();
     _checkIfFollows();
+    _getFollowers();
   }
 
   @override

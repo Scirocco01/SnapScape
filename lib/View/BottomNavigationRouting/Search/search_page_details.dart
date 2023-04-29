@@ -46,16 +46,17 @@ class _SearchPageExploreState extends State<SearchPageExplore> {
   List<int> postCount = [];
   _getPostCount()async{
     final List<int> _postCount = await widget.model.getPostCount(widget.feed.userId);
+
     setState(() {
       postCount = _postCount;
 
     });
-    print('this is the List postcount $postCount');
+    print('this is the List postCount $postCount');
   }
 
   @override
   void initState() {
-    // TODO: implement initState
+
     super.initState();
     _getPostCount();
     userProfileModel = UserProfileModel(
